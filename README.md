@@ -167,11 +167,6 @@ To add a case, append an object with `id`, `category`, `turns` (a list of user m
 
 v3 (caveman-compressed prompt) is being evaluated. See `EVAL_RESULTS_v1_claude.md` and `EVAL_RESULTS_v2.md` for failures, fixes and judge agreement.
 
-## Moving a prompt to GenAI.mil
-
-1. Copy the prompt file's text into the GenAI.mil agent's Instructions field.
-2. Replace `{today}` with "Use today's date from the system", unless GenAI.mil can insert the date.
-3. GenAI.mil shows grounding redirect links. The real-link fix in `agent.py` applies only to this twin.
 
 ## Known limits
 
