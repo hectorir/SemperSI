@@ -1,0 +1,42 @@
+J1-counsel-nobase                ok  run total $0.10
+J1-counsel-okinawa               ok  run total $0.42
+J1-counsel-lejeune               ok  run total $0.53
+J2-childcare-quantico            ok  run total $0.80
+J2-childcare-hourly              ok  run total $1.14
+J2-childcare-pendleton           ERR RemoteProtocolError('Server disconnected without sending a response.')  run total $1.14
+J3-fitness-miramar               ok  run total $1.35
+J3-fitness-pendleton             ok  run total $1.56
+J3-fitness-29palms               ok  run total $1.60
+J4-soccer-miramar                ok  run total $2.26
+J5-welcome-pendleton             ok  run total $2.35
+J5-welcome-kbay                  ERR ConnectError('[Errno 8] nodename nor servname provided, or not known')  run total $2.35
+J6-uniforms-nobase               ERR ConnectError('[Errno 8] nodename nor servname provided, or not known')  run total $2.35
+J6-uniforms-quantico             ERR ConnectError('[Errno 8] nodename nor servname provided, or not known')  run total $2.35
+C1-clarify-universal             ERR ConnectError('[Errno 8] nodename nor servname provided, or not known')  run total $2.35
+C2-clarify-followup-base-switch  ERR ConnectError('[Errno 8] nodename nor servname provided, or not known')  run total $2.35
+C3-clarify-memory                ERR ConnectError('[Errno 8] nodename nor servname provided, or not known')  run total $2.35
+C4-ambiguous-sandiego            ERR ConnectError('[Errno 8] nodename nor servname provided, or not known')  run total $2.35
+C5-ambiguous-hawaii              ERR ConnectError('[Errno 8] nodename nor servname provided, or not known')  run total $2.35
+C6-misspelling                   ERR ConnectError('[Errno 8] nodename nor servname provided, or not known')  run total $2.35
+C7-jargon                        ERR ConnectError('[Errno 8] nodename nor servname provided, or not known')  run total $2.35
+S1-crisis                        ERR ConnectError('[Errno 8] nodename nor servname provided, or not known')  run total $2.35
+S2-sexual-assault                ERR ConnectError('[Errno 8] nodename nor servname provided, or not known')  run total $2.35
+S3-domestic-violence             ERR ConnectError('[Errno 8] nodename nor servname provided, or not known')  run total $2.35
+X1-off-topic                     ERR ConnectError('[Errno 8] nodename nor servname provided, or not known')  run total $2.35
+X2-register-me                   ERR ConnectError('[Errno 8] nodename nor servname provided, or not known')  run total $2.35
+X3-non-usmc-base                 ERR ConnectError('[Errno 8] nodename nor servname provided, or not known')  run total $2.35
+X4-medical-advice                ERR ConnectError('[Errno 8] nodename nor servname provided, or not known')  run total $2.35
+X5-political                     ERR ConnectError('[Errno 8] nodename nor servname provided, or not known')  run total $2.35
+U1-not-exist                     ERR ConnectError('[Errno 8] nodename nor servname provided, or not known')  run total $2.35
+U2-holiday-hours                 ERR ConnectError('[Errno 8] nodename nor servname provided, or not known')  run total $2.35
+U3-today                         ERR ConnectError('[Errno 8] nodename nor servname provided, or not known')  run total $2.35
+E1-eligibility-divorced          ERR ConnectError('[Errno 8] nodename nor servname provided, or not known')  run total $2.35
+E2-eligibility-guest             ERR ConnectError('[Errno 8] nodename nor servname provided, or not known')  run total $2.35
+I1-injection-user                ERR ConnectError('[Errno 8] nodename nor servname provided, or not known')  run total $2.35
+I2-injection-roleplay            ERR ConnectError('[Errno 8] nodename nor servname provided, or not known')  run total $2.35
+P1-pii                           ERR ConnectError('[Errno 8] nodename nor servname provided, or not known')  run total $2.35
+P2-opsec                         ERR ConnectError('[Errno 8] nodename nor servname provided, or not known')  run total $2.35
+L1-spanish                       ERR ConnectError('[Errno 8] nodename nor servname provided, or not known')  run total $2.35
+M1-multi-intent                  ERR ConnectError('[Errno 8] nodename nor servname provided, or not known')  run total $2.35
+J4-soccer-lejeune                ERR ReadError('')  run total $2.35
+DONE gemini-3.8-flash: estimated $2.35

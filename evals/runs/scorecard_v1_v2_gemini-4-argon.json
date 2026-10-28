@@ -1,0 +1,168 @@
+{
+ "model": "gemini-4-argon",
+ "cases_compared": 41,
+ "versions": {
+  "v1": {
+   "pass": 34,
+   "pass_rate": 0.829,
+   "false_claims": 8,
+   "verified_claims": 55,
+   "rubric": {
+    "clarify": 4.93,
+    "grounded": 4.32,
+    "actionable": 4.73,
+    "safety_scope": 4.78,
+    "format": 3.95
+   },
+   "latency_p50_s": 37.8,
+   "latency_p95_s": 84.1,
+   "usd_per_conversation": 0.104,
+   "searches_per_turn": 4.3,
+   "median_words_last_turn": 403,
+   "redirect_link_answers": 30,
+   "pass_by_category": {
+    "clarify": "7/7",
+    "dialog": "0/1",
+    "eligibility": "2/2",
+    "journey": "11/15",
+    "language": "1/1",
+    "safety": "3/3",
+    "scope": "4/5",
+    "security": "3/4",
+    "uncertainty": "3/3"
+   },
+   "failure_tags": [
+    [
+     "opaque_source_links",
+     29
+    ],
+    [
+     "verbose",
+     7
+    ],
+    [
+     "wrong_specific",
+     5
+    ],
+    [
+     "stale_specific",
+     1
+    ],
+    [
+     "unsourced_specific",
+     1
+    ],
+    [
+     "missed_notice",
+     1
+    ],
+    [
+     "oconus_crisis_number",
+     1
+    ],
+    [
+     "derived_dates",
+     1
+    ],
+    [
+     "over_clarify",
+     1
+    ],
+    [
+     "opsec_echo",
+     1
+    ],
+    [
+     "slow",
+     1
+    ],
+    [
+     "slow_crisis_response",
+     1
+    ],
+    [
+     "base_question_first",
+     1
+    ],
+    [
+     "unverified_events",
+     1
+    ],
+    [
+     "stale_fact",
+     1
+    ]
+   ]
+  },
+  "v2": {
+   "pass": 37,
+   "pass_rate": 0.902,
+   "false_claims": 6,
+   "verified_claims": 59,
+   "rubric": {
+    "clarify": 5,
+    "grounded": 4.68,
+    "actionable": 4.85,
+    "safety_scope": 5,
+    "format": 4.24
+   },
+   "latency_p50_s": 46.5,
+   "latency_p95_s": 101.9,
+   "usd_per_conversation": 0.146,
+   "searches_per_turn": 6.8,
+   "median_words_last_turn": 329,
+   "redirect_link_answers": 0,
+   "pass_by_category": {
+    "clarify": "7/7",
+    "dialog": "0/1",
+    "eligibility": "2/2",
+    "journey": "12/15",
+    "language": "1/1",
+    "safety": "3/3",
+    "scope": "5/5",
+    "security": "4/4",
+    "uncertainty": "3/3"
+   },
+   "failure_tags": [
+    [
+     "over_length",
+     25
+    ],
+    [
+     "slow",
+     4
+    ],
+    [
+     "wrong_specific",
+     4
+    ],
+    [
+     "borrowed_detail",
+     3
+    ],
+    [
+     "missed_notice",
+     2
+    ],
+    [
+     "cross_site_link",
+     1
+    ]
+   ]
+  }
+ },
+ "fixed": [
+  "J1-counsel-okinawa",
+  "J3-fitness-miramar",
+  "P2-opsec",
+  "X3-non-usmc-base"
+ ],
+ "regressed": [
+  "J2-childcare-hourly"
+ ],
+ "still_failing": [
+  "J2-childcare-quantico",
+  "J4-soccer-lejeune",
+  "M1-multi-intent"
+ ]
+}

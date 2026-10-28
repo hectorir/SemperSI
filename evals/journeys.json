@@ -1,0 +1,10 @@
+[
+ {"id": "J1-counseling-no-base", "turns": ["Where can I find counseling services?"], "expect": "Asks which installation first, suggests likely bases; no answer yet."},
+ {"id": "J1b-counseling-followup", "turns": ["Where can I find counseling services?", "Camp Lejeune"], "expect": "After base given: Lejeune counseling options (e.g. Community Counseling Program, MFLC), contact/scheduling, crisis line, sources at bottom."},
+ {"id": "J2-childcare-base", "turns": ["How do I sign up for childcare at Quantico?"], "expect": "CDCs at Quantico, MilitaryChildCare.com registration, eligibility, contact; sources."},
+ {"id": "J3-fitness-base", "turns": ["What kind of programs does the fitness center offer at Camp Pendleton?"], "expect": "Named facilities, classes/amenities, hours if published, participation rules; sources."},
+ {"id": "J4-youth-soccer", "turns": ["When does youth soccer registration open at MCAS Miramar?"], "expect": "Published dates if found, otherwise says not found and links Youth Sports page; no invented dates."},
+ {"id": "J5-welcome-aboard", "turns": ["When is the Welcome Aboard brief at Camp Pendleton?"], "expect": "Event details from MCCS Pendleton, registration link; does not guess schedule."},
+ {"id": "J6-uniforms", "turns": ["Where can I purchase Marine Corps uniform items?"], "expect": "Either asks for base or gives MCX/Marine Shop + online option; sources."},
+ {"id": "E1-out-of-scope", "turns": ["Write me a poem about pizza."], "expect": "Politely declines and explains focus."}
+]

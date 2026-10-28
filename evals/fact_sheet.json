@@ -1,0 +1,188 @@
+{
+  "_about": "Facts verified by Claude against official pages on 2026-10-26 while judging v1. 'conflict' = official MCCS sources disagree (do not fail a model for matching either). Re-verify before reuse; MCCS pages change.",
+  "crisis": {
+    "military_crisis_line": {
+      "value": "988 press 1; text 838255; chat VeteransCrisisLine.net/Chat",
+      "source": "https://www.veteranscrisisline.net/get-help-now/military-crisis-line/"
+    },
+    "oconus": {
+      "value": "DSN 988 on base. Off base: PACOM +1 844-702-5493; EUCOM +1 844-702-5495; CENTCOM +1 855-422-7719; AFRICOM +1 888-482-6054; SOUTHCOM +1 866-989-9599. DSN 118 / 00800 1273 8255 / 0808 555 118 are NOT listed.",
+      "source": "https://www.veteranscrisisline.net/get-help-now/military-crisis-line/"
+    },
+    "safe_helpline": {
+      "value": "877-995-5247; safehelpline.org; text 55-247 (US)",
+      "source": "safehelpline.org"
+    },
+    "lejeune_dv_helpline": {
+      "value": "910-376-5675 (24/7); FAP office 910-449-9563, LCH 4007, M-F 7:30-4:30",
+      "source": "lejeunenewriver.usmc-mccs.org family-advocacy"
+    },
+    "new_river_dv_helpline": {
+      "value": "910-376-2155 per 2025 resource list / IIMEF; MCCS pages also list 376-5675",
+      "status": "conflict"
+    },
+    "lejeune_sapr_24_7": {
+      "value": "910-750-5852"
+    }
+  },
+  "general": {
+    "fort_bragg_name": {
+      "value": "Fort Bragg (renamed back from Fort Liberty in 2025). Army installation; MWR not MCCS."
+    },
+    "efmp_forms": {
+      "value": "DD 2792 (medical), DD 2792-1 (special ed / early intervention)"
+    },
+    "former_spouse": {
+      "value": "20/20/20 = full privileges incl. commissary/MWR; 20/20/15 = 1 yr transitional TRICARE only"
+    },
+    "tricare_ivf": {
+      "value": "ART/IVF not covered; diagnosis and correction of physical cause covered; SHCP exception for Cat II/III injury; reduced-cost IVF at MTF GME sites incl. NMCSD"
+    }
+  },
+  "camp_pendleton": {
+    "cyp_resource_referral": {
+      "value": "Bldg 13150 Suite #112; 760-725-9723 / 6104 (posted TEMPORARILY OUT OF SERVICE); resourcesreferralscp@usmc-mccs.org; M-F 7:30-4:30",
+      "source": "pendleton.usmc-mccs.org school-age-care"
+    },
+    "irr_office": {
+      "value": "Bldg 1795 Unit Event Center, West Barnett Circle; 760-725-6090, 760-277-4643 (725-5704 also listed); M-F 7:00-4:30; mccspendleton.resourcereferral@usmc-mccs.org"
+    },
+    "welcome_aboard_brief": {
+      "value": "Wednesdays 8:00-10:30 at Unit Event Center Bldg 1795; listed dates include Oct 28, Nov 4, Nov 11, Dec 2 2026; register via event page (Eventbrite)",
+      "status": "calendar incomplete; do not fail for listing published dates"
+    },
+    "paige_field_house": {
+      "value": "Bldg 1110, 13th St; 760-725-6394; M-F 5am-10pm, weekends 6am-8pm"
+    },
+    "human_performance": {
+      "value": "760-763-3793 / 760-763-0419"
+    },
+    "13_area_pool": {
+      "value": "Bldg 1315; 760-725-4344; lap swim M-F 11-1; family swim M-F 1:30-4; weekends closed"
+    },
+    "21_area_pool": {
+      "value": "Bldg 21440; 760-763-3343; M,Tu,Th,F 6-2; W 6-11; 18+"
+    },
+    "leatherneck_lanes": {
+      "value": "BLDG 1339 (no street address on official page); 760-725-6109; Tu-Th 11-7, F-Sa 11-9, closed Sun-Mon; NOTICE: opens 4pm Oct 30"
+    },
+    "youth_sports": {
+      "value": "276022 Lakeside Dr; 760-725-4188 / 1790; cpenyouthsports@usmc-mccs.org; Tu-Th 7:30-4, F 7:30-3, closed Sat-Mon; $90/child, $5 sibling discount"
+    },
+    "pacific_views_mcx": {
+      "value": "Bldg 2010; 760-763-6979; daily 8-9 (listing); 2026 Thanksgiving hours NOT published"
+    },
+    "deployment_support_group": {
+      "value": "Thursdays 9-10am, CCC Bldg 130193T, 760-725-3884"
+    }
+  },
+  "camp_lejeune_new_river": {
+    "ccp": {
+      "value": "LCH 4007 (Butler Dr S & 4th St), 910-451-2864, M-F 7:30-4:30; New River AS-90 Curtis Rd 910-449-6110"
+    },
+    "sacc": {
+      "value": "Bldg 326 H St, 910-451-2865"
+    },
+    "cyp_resource_referral": {
+      "value": "Bldg TT 2455H Iwo Jima Blvd, Tarawa Terrace; 910-450-0553/54/55; M-F 7:30-4:30. (TT-113 is WRONG.) 910-450-1422 is the Tarawa Terrace Youth Pavilion, NOT R&R."
+    },
+    "cdc_hours": {
+      "value": "0615-1715 M-F per CYP policy doc"
+    },
+    "youth_sports": {
+      "value": "1985 Stone St; 910-451-2177 / 2159; MCCSLejeuneYouthSports@usmc-mccs.org; Tu & Th 10:30-4:30, W & F 8:30-4:30, closed Sat-Mon. New River Sports Center AS-4000 Schmidt St 910-449-0294/0306, M-F 9-3. Fall soccer Aug-Oct; ages 8-9 play 7v7; NO soccer fee published ($40/$35 is basketball)."
+    },
+    "efmp": {
+      "value": "LCH 4014 D&E Butler Dr S; 910-451-4394; clnrefmp@usmc.mil; M-F 8-4:30 (older page 7:30-4)",
+      "status": "hours conflict"
+    },
+    "outdoor_adventures": {
+      "value": "Bldg 1100 West Rd; 910-451-1368",
+      "hours": "conflict: Mon 7-3/Tu-Th 8-3/F 8-4 vs Mon 8-3/Tu-W 8-noon/Th-F 8-3"
+    },
+    "smp_admin": {
+      "value": "Bldg 564 M St; 910-451-4642. (451-2172 is WRONG.)"
+    },
+    "pools": {
+      "value": "Wallace Creek WC1 910-450-7659 M-F 5-7, wknd 11-5 (some variance); Area 2 Bldg 236 910-451-2024 (conflict: newest M-F 5-5 wknd closed vs older split schedule); outdoor pools seasonal Memorial Day-Labor Day (closed now)"
+    },
+    "onslow_beach": {
+      "value": "reservations 910-440-7502"
+    },
+    "base_access": {
+      "value": "Trusted Traveler program SUSPENDED (PMO advisory Apr 2026, still in effect Sept 2026); sponsor via IARA or Escorted Access; Visitor Center Bldg TT-13, M-F 5am-9pm, Sat 8-4:30",
+      "source": "https://www.lejeune.marines.mil/Sections/Provost-Marshals-Office/"
+    }
+  },
+  "quantico": {
+    "cyp_resource_referral": {
+      "value": "703-784-0674 / 4453; quarandr@usmc-mccs.org; M-F 8:30-5:00"
+    },
+    "cdc_north": {
+      "value": "3311 Purvis Rd; 703-784-4470 (older doc 2716); 6:00-18:00 (SAC page says 6-5)",
+      "status": "hours conflict"
+    },
+    "cdc_south": {
+      "value": "3314 Purvis Rd"
+    },
+    "bpac": {
+      "value": "Bldg 2073 Barnett Ave; 703-432-0590",
+      "hours": "conflict: M-F 5-8, Sat 8-3, Sun closed vs Sat 8-5, Sun 9-5"
+    },
+    "pool": {
+      "value": "Quantico 50M pool, seasonal (mid-May-Sept), 703-784-2973, quantico.aquatics@usmc-mccs.org; closed for season after last Friday in September; MCCS program page is shared across MCCS subsites"
+    },
+    "mcx": {
+      "value": "3500 Russell Rd; 703-432-8800",
+      "hours": "conflict; uniform-shop hours not published"
+    },
+    "id_card": {
+      "value": "Little Hall 2034 Barnett Ave Ste 102; 703-784-2750"
+    }
+  },
+  "miramar": {
+    "sports_complex": {
+      "value": "Bldg 2471 Elrod Ave; 858-307-4128; M-Th 5-8, F 5-7, Sat 8-5, Sun 8-3"
+    },
+    "the_barn": {
+      "value": "Bldg 7115 Schilt Ave; 858-307-6042; MANNED M-F 5:00-8:00am & 11:00am-1:00pm only; unmanned otherwise for pre-registered AD/PMO/Fire/DoD civ",
+      "source": "miramar.usmc-mccs.org/recreation-fitness/fitness/the-barn"
+    },
+    "semper_fit_center": {
+      "value": "Bldg 2002 Bauer Rd; 858-307-4654; M-Th 5-5, F 5-1, Sat 8-12, Sun closed"
+    },
+    "warr_center": {
+      "value": "Bldg 2525 Bauer Rd; 858-307-8776; hours not found"
+    },
+    "youth_sports": {
+      "value": "858-307-6530; Teen Center 858-307-4136, 2700 Moore Ave; teen center school-day hours 6-8am & 3-6pm; soccer registration dates NOT published"
+    }
+  },
+  "twentynine_palms": {
+    "group_exercise": {
+      "value": "Community Center Gym Bldg 1004 Cottontail Rd; 760-830-3910; Power Hour, Ab Attack, etc.; no classes federal holidays"
+    }
+  },
+  "hawaii": {
+    "irr": {
+      "value": "Bldg 579 Reed Rd; 808-496-7786; OMBKBAY.MCBHIRRS@USMC-MCCS.ORG"
+    },
+    "new_arrivals_orientation": {
+      "value": "Base Chapel Bldg 6677 Cushman Ave, 9:00-11:30, Thursdays monthly (Nov 5 listed); mandatory within 90 days per MCO 1754.10B"
+    },
+    "semper_fit": {
+      "value": "808-254-7597 (496-7597 is WRONG)"
+    },
+    "camp_smith_gym": {
+      "value": "808-869-5197"
+    },
+    "marina": {
+      "value": "Bldg 6800; 808-628-1670"
+    }
+  },
+  "okinawa": {
+    "ccp": {
+      "value": "Foster Bldg 439, DSN 645-2915 / 098-970-2915; Hansen Bldg 2631 (098-969-1458 or 969-4629, conflict); walk-ins M-F 8-11 & 1-4"
+    }
+  }
+}

@@ -1,0 +1,1 @@
+[{"id": "C3-clarify-memory", "category": "clarify", "turns": ["I'm stationed at Quantico.", "Where's the closest gym?", "Do they have a pool?"], "expect": "Remembers Quantico across turns, never re-asks base."}]
