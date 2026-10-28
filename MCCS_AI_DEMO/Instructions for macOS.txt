@@ -1,0 +1,21 @@
+Instructions for macOS
+
+Download & Save:
+
+Download and save all of the files into a single folder (e.g., on your Desktop or in Downloads).
+
+Rename the File to .html:
+
+Right-click (or Control-click) on MCCS_Demo(Change_to_HTML) and select Get Info (or press Command ⌘ + I).
+
+Under the Name & Extension section, change the name to MCCS_Demo.html (make sure to remove any .txt extension at the end).
+
+If macOS asks "Are you sure you want to change the extension?", click Use .html.
+
+Open Terminal & Launch Chrome Without CORS:
+
+Press Command ⌘ + Space to open Spotlight Search, type Terminal, and press Enter (Return).
+
+Copy and paste the following command into the Terminal window and press Enter:
+
+open -na "Google Chrome" --args --user-data-dir="/tmp/chrome_demo" --d

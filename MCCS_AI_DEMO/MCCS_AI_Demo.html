@@ -1,0 +1,2255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">MCCS Quantico — AI Assistant Demo</title>
+<meta name="theme-color" content="#0C2340">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<!-- Bootstrap 5.3 + Bootstrap Icons CDN -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<!-- Marked.js for rendering markdown responses -->
+<script src="https://cdn.jsdelivr.net/npm/marked@16.3.0/lib/marked.umd.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Ubuntu:wght@700&display=swap');
+:root {
+--marine-red: rgb(166, 25, 46);
+--marine-red-dark: #7f1121;
+--header-blue: #0C2340;
+--mccs-navy-light: #16365f;
+--dod-gold: #f59e0b;
+}
+body {
+font-family: 'Inter', system-ui, -apple-system, sans-serif;
+background-color: #ffffff;
+color: #212529;
+margin: 0;
+}
+.ubuntu-bold {
+font-family: "Ubuntu", sans-serif;
+font-weight: 700;
+}
+/* --- Header Navbar --- */
+.header.navbar {
+background-color: var(--header-blue) !important;
+padding-top: 0.65rem;
+padding-bottom: 0.65rem;
+}
+.modern-search-input {
+background-color: rgba(255, 255, 255, 0.12) !important;
+backdrop-filter: blur(8px);
+border: 1px solid rgba(255, 255, 255, 0.25) !important;
+color: #ffffff !important;
+padding-right: 5rem !important;
+transition: all 0.2s ease;
+width: 100%;
+}
+.modern-search-input::placeholder { color: rgba(255, 255, 255, 0.68) !important; }
+.modern-search-input:focus, .modern-search-input:hover {
+background-color: rgba(255, 255, 255, 0.2) !important;
+border-color: rgba(255, 255, 255, 0.45) !important;
+}
+.shortcut-badge {
+pointer-events: none;
+position: absolute;
+top: 50%;
+right: 38px;
+transform: translateY(-50%);
+background-color: rgba(0, 0, 0, 0.25);
+border: 1px solid rgba(255, 255, 255, 0.15);
+border-radius: 4px;
+padding: 2px 6px;
+font-size: 0.68rem;
+color: rgba(255, 255, 255, 0.75);
+}
+/* --- Ask AI Button in Header & Floating Trigger --- */
+.mccs-ask-ai-btn {
+background: linear-gradient(135deg, var(--marine-red) 0%, #c81e38 100%);
+color: #ffffff !important;
+border: 1px solid rgba(255, 255, 255, 0.4);
+border-radius: 50px;
+padding: 6px 15px;
+font-size: 0.82rem;
+font-weight: 600;
+display: inline-flex;
+align-items: center;
+gap: 6px;
+white-space: nowrap;
+box-shadow: 0 2px 10px rgba(166, 25, 46, 0.45);
+transition: all 0.2s ease;
+cursor: pointer;
+}
+.mccs-ask-ai-btn:hover {
+transform: translateY(-1px);
+box-shadow: 0 4px 14px rgba(166, 25, 46, 0.7);
+border-color: #ffffff;
+}
+.mccs-floating-ai-btn {
+position: fixed;
+bottom: 64px;
+right: 16px;
+z-index: 1045;
+background: linear-gradient(135deg, var(--header-blue) 0%, #16365f 100%);
+color: #ffffff;
+border: 2px solid var(--marine-red);
+border-radius: 50px;
+padding: 8px 16px;
+font-size: 0.82rem;
+font-weight: 700;
+display: flex;
+align-items: center;
+gap: 8px;
+box-shadow: 0 6px 20px rgba(12, 35, 64, 0.38);
+cursor: pointer;
+transition: all 0.2s ease;
+}
+.mccs-floating-ai-btn:hover {
+background: var(--marine-red);
+transform: translateY(-2px);
+}
+.mccs-online-dot {
+width: 8px;
+height: 8px;
+background-color: #22c55e;
+border-radius: 50%;
+box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.3);
+}
+.btn-feedback {
+position: fixed;
+bottom: 16px;
+right: 16px;
+font-weight: 700;
+font-size: 12px;
+background: #7aace1;
+color: #18222d;
+border: #55789d 1px solid;
+padding: 6px 12px;
+border-radius: 10px 10px 0 10px;
+z-index: 1030;
+display: flex;
+align-items: center;
+gap: 6px;
+box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+}
+/* --- COMPACT POPUP CHAT WINDOW --- */
+.mccs-chat-popup {
+position: fixed;
+bottom: 114px;
+right: 16px;
+width: 375px;
+max-width: calc(100vw - 24px);
+height: 520px;
+max-height: calc(100vh - 135px);
+background-color: #ffffff;
+border-radius: 14px;
+box-shadow: 0 16px 42px rgba(12, 35, 64, 0.38);
+border: 1px solid rgba(12, 35, 64, 0.2);
+display: flex;
+flex-direction: column;
+overflow: hidden;
+z-index: 1060;
+opacity: 0;
+visibility: hidden;
+pointer-events: none;
+transform: translateY(16px) scale(0.96);
+transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.mccs-chat-popup.is-open {
+opacity: 1;
+visibility: visible;
+pointer-events: auto;
+transform: translateY(0) scale(1);
+}
+.mccs-chat-header {
+background-color: var(--header-blue);
+color: #ffffff;
+padding: 10px 14px;
+border-bottom: 3px solid var(--marine-red);
+display: flex;
+align-items: center;
+justify-content: space-between;
+}
+.mccs-crisis-strip {
+background-color: #fff1f2;
+border-bottom: 1px solid #fecdd3;
+padding: 5px 12px;
+font-size: 0.68rem;
+color: #881337;
+display: flex;
+align-items: center;
+justify-content: space-between;
+}
+.mccs-crisis-strip a {
+color: var(--marine-red);
+font-weight: 700;
+text-decoration: none;
+}
+.mccs-chat-body {
+flex: 1;
+padding: 12px;
+overflow-y: auto;
+background-color: #f8fafc;
+display: flex;
+flex-direction: column;
+gap: 10px;
+}
+.mccs-msg {
+max-width: 92%;
+padding: 9px 12px;
+border-radius: 11px;
+font-size: 0.8rem;
+line-height: 1.45;
+word-wrap: break-word;
+}
+.mccs-msg.bot {
+background-color: #ffffff;
+color: #1e293b;
+border: 1px solid #e2e8f0;
+border-bottom-left-radius: 3px;
+align-self: flex-start;
+box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+.mccs-msg.bot p { margin-bottom: 0.45rem; }
+.mccs-msg.bot p:last-child { margin-bottom: 0; }
+.mccs-msg.bot ul, .mccs-msg.bot ol { margin: 0.25rem 0 0.45rem 1.1rem; padding: 0; }
+.mccs-msg.bot li { margin-bottom: 0.2rem; }
+.mccs-msg.bot strong { font-weight: 700; color: #0C2340; }
+.mccs-msg.user {
+background-color: var(--header-blue);
+color: #ffffff;
+border-bottom-right-radius: 3px;
+align-self: flex-end;
+}
+.mccs-transfer-card {
+background: linear-gradient(135deg, #0C2340 0%, #16365f 100%);
+color: #ffffff;
+border-radius: 8px;
+padding: 10px 12px;
+margin-top: 8px;
+border-left: 4px solid var(--marine-red);
+box-shadow: 0 4px 12px rgba(12, 35, 64, 0.18);
+}
+.mccs-transfer-btn {
+background-color: var(--marine-red);
+color: #ffffff;
+border: 1px solid rgba(255,255,255,0.3);
+border-radius: 6px;
+padding: 6px 12px;
+font-size: 0.74rem;
+font-weight: 600;
+width: 100%;
+margin-top: 6px;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 6px;
+cursor: pointer;
+transition: all 0.15s ease;
+}
+.mccs-transfer-btn:hover {
+background-color: #c81e38;
+transform: translateY(-1px);
+}
+.mccs-typing-indicator {
+display: inline-flex;
+gap: 4px;
+padding: 4px 8px;
+}
+.mccs-typing-dot {
+width: 6px;
+height: 6px;
+background-color: #94a3b8;
+border-radius: 50%;
+animation: mccsBounce 1.4s infinite ease-in-out both;
+}
+.mccs-typing-dot:nth-child(1) { animation-delay: -0.32s; }
+.mccs-typing-dot:nth-child(2) { animation-delay: -0.16s; }
+@keyframes mccsBounce {
+0%, 80%, 100% { transform: scale(0); }
+40% { transform: scale(1); }
+}
+.mccs-resource-cards {
+display: flex;
+flex-direction: column;
+gap: 5px;
+margin-top: 8px;
+}
+.mccs-resource-card {
+display: flex;
+align-items: center;
+justify-content: space-between;
+background-color: #f1f5f9;
+border: 1px solid #cbd5e1;
+border-left: 3px solid var(--marine-red);
+border-radius: 6px;
+padding: 6px 9px;
+color: var(--header-blue) !important;
+text-decoration: none !important;
+font-size: 0.74rem;
+font-weight: 600;
+}
+.mccs-resource-card:hover { background-color: #e2e8f0; }
+.mccs-chips {
+display: flex;
+flex-wrap: wrap;
+gap: 5px;
+margin-top: 6px;
+}
+.mccs-chip {
+background-color: #ffffff;
+border: 1px solid #cbd5e1;
+color: var(--header-blue);
+border-radius: 16px;
+padding: 4px 10px;
+font-size: 0.71rem;
+font-weight: 500;
+cursor: pointer;
+transition: all 0.15s ease;
+}
+.mccs-chip:hover {
+border-color: var(--marine-red);
+background-color: #fff1f2;
+color: var(--marine-red);
+}
+.mccs-chip-loc {
+border-color: var(--header-blue);
+font-weight: 600;
+}
+.mccs-chat-footer {
+padding: 8px 10px;
+background-color: #ffffff;
+border-top: 1px solid #e2e8f0;
+}
+.mccs-chat-input-row {
+display: flex;
+gap: 6px;
+}
+.mccs-chat-input {
+flex: 1;
+border: 1px solid #cbd5e1;
+border-radius: 7px;
+padding: 7px 11px;
+font-size: 0.8rem;
+outline: none;
+}
+.mccs-chat-input:focus { border-color: var(--marine-red); }
+.mccs-chat-send {
+background-color: var(--marine-red);
+color: #ffffff;
+border: none;
+border-radius: 7px;
+padding: 0 14px;
+font-weight: 600;
+font-size: 0.8rem;
+cursor: pointer;
+transition: background 0.15s;
+}
+.mccs-chat-send:hover { background-color: var(--marine-red-dark); }
+.hero4section-link {
+width: 100%;
+height: 100%;
+display: block;
+background: #0C2340;
+position: relative;
+overflow: hidden;
+}
+.hero4section-link img { transition: transform 0.4s ease, opacity 0.4s ease; }
+.hero4section-link:hover img { opacity: 0.82; transform: scale(1.02); }
+.gradient-overlay {
+position: absolute;
+bottom: 0; left: 0; right: 0; height: 100%;
+background: linear-gradient(to top, rgba(0, 0, 0, 0.85), transparent);
+}
+.home-tiles-layout a {
+text-decoration: none;
+text-align: center;
+display: block;
+padding: 10px 4px;
+border-radius: 10px;
+transition: transform 0.15s ease, background-color 0.15s ease;
+}
+.home-tiles-layout a:hover {
+background-color: #f8fafc;
+transform: translateY(-2px);
+}
+.home-tiles-layout h5 {
+font-size: 0.8rem;
+font-weight: 600;
+margin-top: 6px;
+color: #333;
+}
+.location-select-card {
+cursor: pointer;
+transition: all 0.2s ease;
+border: 2px solid transparent;
+}
+.location-select-card:hover {
+background-color: #e2e8f0 !important;
+transform: translateY(-2px);
+}
+.location-select-card.active-location {
+border-color: var(--marine-red) !important;
+background-color: #fff1f2 !important;
+}
+
+/* --- "All sites" modal --- */
+.mccs-loc-modal {
+border: none;
+border-radius: 14px;
+overflow: hidden;
+}
+.mccs-loc-modal .modal-header {
+background: var(--header-blue);
+color: #ffffff;
+border-bottom: 3px solid var(--marine-red);
+}
+.mccs-loc-modal .modal-header .sub { color: rgba(255, 255, 255, 0.72); font-size: 0.8rem; }
+.mccs-loc-modal .btn-close { filter: invert(1) grayscale(100%) brightness(200%); }
+.mccs-loc-modal .modal-body { background: #f4f6f9; }
+.mccs-loc-search { position: relative; }
+.mccs-loc-search i {
+position: absolute;
+left: 13px;
+top: 50%;
+transform: translateY(-50%);
+color: #94a3b8;
+}
+.mccs-loc-search input {
+padding-left: 38px;
+border-radius: 10px;
+border-color: #cfd8e3;
+}
+.mccs-loc-search input:focus { border-color: var(--marine-red); box-shadow: 0 0 0 3px rgba(166, 25, 46, 0.12); }
+.mccs-loc-region {
+display: flex;
+align-items: center;
+gap: 8px;
+margin: 16px 0 8px;
+font-size: 0.7rem;
+font-weight: 700;
+letter-spacing: 0.09em;
+text-transform: uppercase;
+color: #475569;
+}
+.mccs-loc-region::after {
+content: "";
+flex: 1;
+height: 1px;
+background: #d3dae3;
+}
+.mccs-loc-region .count {
+background: #e2e8f0;
+color: #475569;
+border-radius: 999px;
+padding: 1px 7px;
+font-size: 0.64rem;
+letter-spacing: 0;
+}
+.mccs-loc-card {
+width: 100%;
+height: 100%;
+text-align: left;
+background: #ffffff;
+border: 1px solid #dde3ea;
+border-top: 3px solid #dde3ea;
+border-radius: 12px;
+padding: 12px 14px;
+display: flex;
+flex-direction: column;
+gap: 3px;
+transition: all 0.15s ease;
+}
+.mccs-loc-card:hover {
+transform: translateY(-2px);
+box-shadow: 0 8px 18px rgba(12, 35, 64, 0.12);
+border-top-color: var(--header-blue);
+}
+.mccs-loc-card .name {
+font-family: "Ubuntu", sans-serif;
+font-weight: 700;
+color: var(--header-blue);
+font-size: 1rem;
+}
+.mccs-loc-card .city { font-size: 0.78rem; color: #334155; }
+.mccs-loc-card .areas { font-size: 0.72rem; color: #64748b; line-height: 1.35; }
+.mccs-loc-card .meta {
+margin-top: auto;
+padding-top: 8px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+font-size: 0.72rem;
+color: #475569;
+}
+.mccs-loc-card .current { display: none; color: var(--marine-red); font-weight: 700; }
+.mccs-loc-card.active {
+border-color: var(--marine-red);
+border-top-color: var(--marine-red);
+box-shadow: 0 0 0 1px var(--marine-red) inset;
+}
+.mccs-loc-card.active .current { display: inline-flex; gap: 4px; align-items: center; }
+
+/* --- Journey & Follow-Up Cards (Screenshot Card Style) --- */
+.mccs-journey-grid {
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+gap: 7px;
+margin-top: 8px;
+}
+.mccs-followup-grid {
+display: grid;
+grid-template-columns: 1fr;
+gap: 6px;
+margin-top: 6px;
+}
+.mccs-journey-card {
+display: flex;
+align-items: center;
+gap: 8px;
+background-color: #ffffff;
+border: 1px solid #cbd5e1;
+border-left: 3.5px solid var(--marine-red);
+border-radius: 8px;
+padding: 7px 9px;
+color: var(--header-blue);
+font-size: 0.72rem;
+font-weight: 700;
+line-height: 1.25;
+text-align: left;
+cursor: pointer;
+transition: all 0.16s ease;
+box-shadow: 0 1px 2px rgba(12, 35, 64, 0.04);
+width: 100%;
+}
+.mccs-journey-card i {
+color: var(--marine-red);
+font-size: 0.98rem;
+flex-shrink: 0;
+line-height: 1;
+}
+.mccs-journey-card:hover {
+border-color: var(--marine-red);
+background-color: #fff1f2;
+color: var(--marine-red);
+transform: translateY(-1px);
+box-shadow: 0 4px 10px rgba(166, 25, 46, 0.12);
+}
+
+/* --- Streamlined CONUS Map Diagram + OCONUS Directory Footer --- */
+.mccs-footer-map-section {
+background: linear-gradient(180deg, #091a30 0%, #061221 100%);
+border-top: 3px solid var(--marine-red);
+}
+.mccs-conus-card, .mccs-oconus-card {
+background: #0c213b;
+border: 1px solid rgba(255, 255, 255, 0.14);
+border-radius: 14px;
+overflow: hidden;
+box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+height: 100%;
+display: flex;
+flex-direction: column;
+}
+.mccs-panel-header {
+padding: 10px 14px;
+background: rgba(8, 22, 40, 0.75);
+border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 8px;
+}
+.mccs-conus-svg-wrap {
+position: relative;
+width: 100%;
+padding: 8px 10px 4px;
+background: radial-gradient(circle at 50% 45%, #122d52 0%, #09182c 100%);
+flex: 1;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+.mccs-conus-svg {
+width: 100%;
+height: auto;
+max-height: 340px;
+display: block;
+user-select: none;
+}
+.conus-land-outline {
+fill: #173760;
+stroke: #3b689e;
+stroke-width: 2;
+stroke-linejoin: round;
+filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.45));
+}
+.conus-grid-line {
+stroke: rgba(255, 255, 255, 0.06);
+stroke-width: 1;
+stroke-dasharray: 4 4;
+}
+.conus-region-label {
+fill: rgba(255, 255, 255, 0.16);
+font-size: 13px;
+font-weight: 700;
+letter-spacing: 0.22em;
+text-anchor: middle;
+pointer-events: none;
+}
+.conus-leader-line {
+stroke: rgba(255, 255, 255, 0.38);
+stroke-width: 1.2;
+stroke-dasharray: 2 2;
+pointer-events: none;
+transition: stroke 0.15s ease, stroke-width 0.15s ease;
+}
+.conus-node {
+cursor: pointer;
+}
+.conus-node:hover .conus-leader-line,
+.conus-node.is-active .conus-leader-line {
+stroke: #f59e0b;
+stroke-width: 1.8;
+stroke-dasharray: none;
+}
+.conus-pin-pulse {
+fill: none;
+stroke: #f59e0b;
+stroke-width: 2;
+opacity: 0;
+pointer-events: none;
+}
+.conus-node.is-active .conus-pin-pulse {
+opacity: 1;
+animation: conusSvgPulse 1.8s infinite ease-out;
+}
+@keyframes conusSvgPulse {
+0% { r: 6px; opacity: 0.95; }
+100% { r: 18px; opacity: 0; }
+}
+.conus-pin-circle {
+fill: var(--marine-red);
+stroke: #ffffff;
+stroke-width: 1.8;
+transition: all 0.16s ease;
+}
+.conus-node:hover .conus-pin-circle {
+fill: #f59e0b;
+r: 7px;
+}
+.conus-node.is-active .conus-pin-circle {
+fill: #f59e0b;
+stroke: #ffffff;
+stroke-width: 2.2;
+r: 7.5px;
+}
+.conus-label-box {
+fill: rgba(9, 23, 42, 0.88);
+stroke: rgba(255, 255, 255, 0.24);
+stroke-width: 1;
+rx: 5;
+ry: 5;
+transition: all 0.15s ease;
+}
+.conus-node:hover .conus-label-box {
+fill: var(--marine-red);
+stroke: #ffffff;
+}
+.conus-node.is-active .conus-label-box {
+fill: #f59e0b;
+stroke: #ffffff;
+stroke-width: 1.5;
+}
+.conus-label-text {
+fill: #e2e8f0;
+font-size: 10.5px;
+font-weight: 600;
+font-family: 'Inter', system-ui, sans-serif;
+dominant-baseline: middle;
+transition: fill 0.15s ease;
+}
+.conus-node:hover .conus-label-text {
+fill: #ffffff;
+font-weight: 700;
+}
+.conus-node.is-active .conus-label-text {
+fill: #071526;
+font-weight: 700;
+}
+.mccs-map-legend {
+padding: 8px 14px;
+background: rgba(7, 21, 38, 0.9);
+border-top: 1px solid rgba(255, 255, 255, 0.08);
+display: flex;
+flex-wrap: wrap;
+align-items: center;
+justify-content: space-between;
+gap: 10px;
+font-size: 0.73rem;
+color: rgba(255, 255, 255, 0.75);
+}
+.mccs-legend-dot {
+display: inline-block;
+width: 10px;
+height: 10px;
+border-radius: 50%;
+margin-right: 5px;
+border: 1.5px solid #fff;
+vertical-align: middle;
+}
+/* --- OCONUS & Recruiting List Panel --- */
+.mccs-oconus-body {
+padding: 12px 14px;
+display: flex;
+flex-direction: column;
+gap: 12px;
+flex: 1;
+justify-content: space-between;
+}
+.mccs-oconus-group-title {
+font-size: 0.67rem;
+font-weight: 700;
+text-transform: uppercase;
+letter-spacing: 0.08em;
+color: #94a3b8;
+margin-bottom: 6px;
+display: flex;
+align-items: center;
+gap: 6px;
+}
+.mccs-oconus-grid {
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+gap: 6px;
+}
+.mccs-oconus-btn {
+background: rgba(255, 255, 255, 0.05);
+border: 1px solid rgba(255, 255, 255, 0.15);
+border-left: 3px solid var(--marine-red);
+border-radius: 8px;
+padding: 7px 10px;
+color: #f8fafc;
+text-align: left;
+cursor: pointer;
+transition: all 0.15s ease;
+display: flex;
+flex-direction: column;
+gap: 1px;
+}
+.mccs-oconus-btn:hover {
+background: rgba(166, 25, 46, 0.28);
+border-color: #ff6b81;
+transform: translateY(-1px);
+}
+.mccs-oconus-btn.is-active {
+background: rgba(245, 158, 11, 0.18);
+border-color: #f59e0b;
+border-left: 4px solid #f59e0b;
+box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.4);
+}
+.mccs-oconus-btn .inst-name {
+font-size: 0.76rem;
+font-weight: 700;
+color: #ffffff;
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 4px;
+}
+.mccs-oconus-btn.is-active .inst-name {
+color: #fcd34d;
+}
+.mccs-oconus-btn .inst-loc {
+font-size: 0.66rem;
+color: rgba(255, 255, 255, 0.62);
+}
+</style>
+</head>
+<body>
+<!-- ======================= SITE HEADER ======================= -->
+<header id="header" role="banner">
+<!-- Offcanvas MegaMenu -->
+<div class="offcanvas offcanvas-top p-0 m-0 vh-100" tabindex="-1" id="offcanvasSidebar" style="background-color: #EBEBEB;">
+<div class="offcanvas-header container-fluid d-flex border-bottom border-1 border-black">
+<span class="fw-bold text-uppercase" id="megaMenuTitle">MCCS Quantico Directory</span>
+<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+</div>
+<div class="offcanvas-body container py-4">
+<div class="mb-4">
+<span class="small fw-bold text-uppercase text-secondary d-block mb-2">Switch Installation Site:</span>
+<div class="d-flex flex-wrap gap-2" id="megaMenuSites"></div>
+</div>
+<div class="row g-4" id="megaMenuLinksContainer">
+<div class="col-md-4">
+<h5 class="ubuntu-bold border-bottom border-dark pb-2">Marine &amp; Family Support</h5>
+<ul class="list-unstyled lh-lg">
+<li><a href="#ask-ai" data-bs-dismiss="offcanvas" onclick="handleUserPrompt('Where can I find counseling services?'); return false;">Community Counseling Program (CCP)</a></li>
+<li><a href="#ask-ai" data-bs-dismiss="offcanvas" onclick="handleUserPrompt('How do I sign up for childcare?'); return false;">Child Development Centers (CDC)</a></li>
+<li><a href="#ask-ai" data-bs-dismiss="offcanvas" onclick="handleUserPrompt('When does youth soccer registration open?'); return false;">Youth &amp; Teen Sports</a></li>
+<li><a href="#ask-ai" data-bs-dismiss="offcanvas" onclick="handleUserPrompt('When is the Welcome Aboard brief?'); return false;">Information, Referral &amp; Relocation</a></li>
+</ul>
+</div>
+<div class="col-md-4">
+<h5 class="ubuntu-bold border-bottom border-dark pb-2">Recreation &amp; Fitness</h5>
+<ul class="list-unstyled lh-lg">
+<li><a href="#ask-ai" data-bs-dismiss="offcanvas" onclick="handleUserPrompt('What programs does the fitness center offer?'); return false;">Fitness Centers &amp; HITT</a></li>
+<li><a href="#ask-ai" data-bs-dismiss="offcanvas" onclick="handleUserPrompt('How do I register for 24/7 gym access?'); return false;">24/7 Fitness Center CAC Access</a></li>
+<li><a href="#ask-ai" data-bs-dismiss="offcanvas" onclick="handleUserPrompt('When does youth soccer registration open?'); return false;">Youth &amp; Adult Sports</a></li>
+</ul>
+</div>
+<div class="col-md-4">
+<h5 class="ubuntu-bold border-bottom border-dark pb-2">Shopping &amp; Hospitality</h5>
+<ul class="list-unstyled lh-lg">
+<li><a href="#ask-ai" data-bs-dismiss="offcanvas" onclick="handleUserPrompt('Where can I purchase uniform items?'); return false;">Marine Corps Exchange (MCX) &amp; Uniforms</a></li>
+<li><a href="https://www.mymcx.com/uniforms" target="_blank">Order Uniforms Online (myMCX)</a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<!-- Location Selector Modal (populated from INSTALLATIONS) -->
+<div class="modal fade" id="locationModal" tabindex="-1" aria-labelledby="locationModalLabel" aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
+<div class="modal-content mccs-loc-modal">
+<div class="modal-header">
+<div>
+<h5 class="modal-title ubuntu-bold mb-0" id="locationModalLabel">Choose your MCCS installation</h5>
+<div class="sub"><span id="locModalCount">24</span> installations · Currently viewing <strong id="locModalCurrent">Quantico</strong></div>
+</div>
+<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+<div class="mccs-loc-search">
+<i class="bi bi-search"></i>
+<input type="search" id="locSearch" class="form-control" placeholder="Search by name, city, or area (e.g. Kaneohe, Arizona, Camp Foster)" autocomplete="off" aria-label="Search installations">
+</div>
+<div id="locModalGroups"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Primary Navigation Bar -->
+<nav class="header navbar border-bottom border-3 navbar-expand-lg navbar-dark flex-nowrap" style="border-color: crimson!important;">
+<div class="container-fluid d-flex align-items-center justify-content-between">
+<!-- LEFT: Menu + Logo -->
+<div class="d-flex align-items-center">
+<button id="menu-button" class="btn me-2 d-flex flex-column align-items-center" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar">
+<i class="bi bi-list text-white fs-3 lh-1"></i>
+<span class="text-white" style="font-size:9px;font-weight:bold;">MENU</span>
+</button>
+<a href="#top" onclick="return false;" class="navbar-brand me-3 d-flex align-items-center">
+<span class="fw-bold text-white fs-4" style="letter-spacing: 0.04em;">MCCS <span id="brandBaseName" class="fw-normal fs-6 opacity-75 d-none d-sm-inline">QUANTICO</span></span>
+</a>
+</div>
+<!-- CENTER: Search Bar -->
+<div class="d-none d-md-block mx-3" style="width: 100%; max-width: 340px;">
+<div class="position-relative w-100">
+<input id="headerSearchTrigger" class="form-control form-control-sm rounded-2 modern-search-input" type="text" placeholder="Search or click Ask AI..." readonly style="cursor: pointer;">
+<div class="shortcut-badge">Ctrl K</div>
+<i class="bi bi-search position-absolute top-50 end-0 translate-middle-y me-3 text-white-50"></i>
+</div>
+</div>
+<!-- RIGHT: Ask AI Button + Location Selector -->
+<div class="d-flex align-items-center gap-2">
+<button id="headerAskAiBtn" type="button" class="mccs-ask-ai-btn">
+<i class="bi bi-stars"></i>
+<span>Ask AI</span>
+</button>
+<button type="button" class="btn btn-sm text-light d-flex align-items-center gap-2 border border-secondary border-opacity-50 rounded-pill px-3 py-1" data-bs-toggle="modal" data-bs-target="#locationModal" title="Choose MCCS installation">
+<i class="bi bi-geo-alt-fill" style="color: #f87171;"></i>
+<span id="headerLocationBtnText" class="small fw-semibold d-none d-sm-inline">Quantico</span>
+<i class="bi bi-chevron-down" style="font-size: 0.7rem;"></i>
+</button>
+</div>
+</div>
+</nav>
+</header>
+<!-- Main Body Content -->
+<main id="content" role="main">
+<div class="row g-0">
+<div class="col-12 col-lg-6">
+<a class="hero4section-link" href="#ask-ai" onclick="openAiPopup(); return false;" style="min-height: 300px;">
+<img id="heroMainImg" style="object-fit:cover;width:100%;height:360px;" src="https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&w=1200&q=80" alt="MCCS Fitness">
+<div class="gradient-overlay"></div>
+<div class="position-absolute bottom-0 start-0 p-4 text-white">
+<span id="heroBadge" class="badge bg-danger mb-2">MCCS QUANTICO — CROSSROADS OF THE CORPS</span>
+<h2 id="heroHeadline" class="ubuntu-bold mb-1">Serving the Crossroads of the Marine Corps at Quantico</h2>
+<p id="heroSubtext" class="mb-0 small opacity-75">Click 'Ask AI' to explore MCB Quantico programs, TBS/OCS support, and facilities.</p>
+</div>
+</a>
+</div>
+<div class="col-6 col-lg-3">
+<a class="hero4section-link" href="#ask-ai" onclick="handleUserPrompt('When is the Welcome Aboard brief?'); return false;" style="min-height: 300px;">
+<img style="object-fit:cover;width:100%;height:360px;" src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=700&q=80" alt="Welcome Aboard">
+<div class="gradient-overlay"></div>
+<div class="position-absolute bottom-0 start-0 p-3 text-white">
+<span class="badge bg-danger mb-1">NEW TO BASE?</span>
+<h5 id="heroWelcomeTitle" class="ubuntu-bold mb-0">Welcome Aboard &amp; PCS Orientation</h5>
+</div>
+</a>
+</div>
+<div class="col-6 col-lg-3">
+<div class="row g-0 h-100">
+<div class="col-12">
+<a class="hero4section-link" href="#ask-ai" onclick="handleUserPrompt('When does youth soccer registration open?'); return false;">
+<!-- Native inline vector block -->
+<div style="width:100%;height:180px;background:linear-gradient(135deg, #0C2340 0%, #16365f 100%);display:flex;align-items:center;justify-content:center;">
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="#ffffff" class="bi bi-trophy opacity-75" viewBox="0 0 16 16">
+<path d="M2.5.5A.5.5 0 0 1 3 0h10a.5.5 0 0 1 .5.5c0 .538-.012 1.05-.034 1.536a3 3 0 1 1-1.133 5.89c-.79 1.865-1.878 2.774-3.333 3.03v2.044h2.5a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h2.5V10.96C5.512 10.704 4.424 9.795 3.634 7.93A3 3 0 1 1 2.5 2.036c-.022-.486-.034-.998-.034-1.536M1.5 3a2 2 0 0 0 1.974 1.974A5.95 5.95 0 0 1 3.5 3zm13 0h-.026a5.95 5.95 0 0 1 .026 1.974A2 2 0 0 0 14.5 3m-3.51 4.218a5 5 0 0 0 .5-2.218H4.51a5 5 0 0 0 .5 2.218A4.98 4.98 0 0 0 8 8a4.98 4.98 0 0 0 2.99-1.782"/>
+</svg>
+</div>
+<div class="gradient-overlay"></div>
+<div class="position-absolute bottom-0 start-0 p-3 text-white">
+<h6 class="ubuntu-bold mb-0">Child &amp; Youth Sports</h6>
+</div>
+</a>
+</div>
+<div class="col-12">
+<a class="hero4section-link" href="#ask-ai" onclick="handleUserPrompt('Where can I purchase Marine Corps uniform items?'); return false;">
+<img style="object-fit:cover;width:100%;height:180px;" src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=700&q=80" alt="MCX Shopping">
+<div class="gradient-overlay"></div>
+<div class="position-absolute bottom-0 start-0 p-3 text-white">
+<h6 class="ubuntu-bold mb-0">MCX &amp; Uniform Services</h6>
+</div>
+</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Service Tiles -->
+<div class="container py-4 border-bottom">
+<div class="home-tiles-layout row justify-content-center g-2">
+<div class="col-4 col-sm-3 col-md-2">
+<a href="#ask-ai" onclick="handleUserPrompt('Where can I find counseling services?'); return false;">
+<i class="bi bi-heart-pulse fs-2" style="color: #A6192E;"></i>
+<h5>Prevention &amp; Counseling</h5>
+</a>
+</div>
+<div class="col-4 col-sm-3 col-md-2">
+<a href="#ask-ai" onclick="handleUserPrompt('How do I sign up for childcare?'); return false;">
+<i class="bi bi-people fs-2" style="color: #0C2340;"></i>
+<h5>Child &amp; Youth (CDC)</h5>
+</a>
+</div>
+<div class="col-4 col-sm-3 col-md-2">
+<a href="#ask-ai" onclick="handleUserPrompt('What kind of programs does the fitness center offer?'); return false;">
+<i class="bi bi-activity fs-2" style="color: #A6192E;"></i>
+<h5>Fitness Centers</h5>
+</a>
+</div>
+<div class="col-4 col-sm-3 col-md-2">
+<a href="#ask-ai" onclick="handleUserPrompt('When does youth soccer registration open?'); return false;">
+<i class="bi bi-trophy fs-2" style="color: #0C2340;"></i>
+<h5>Youth Sports</h5>
+</a>
+</div>
+<div class="col-4 col-sm-3 col-md-2">
+<a href="#ask-ai" onclick="handleUserPrompt('When is the Welcome Aboard brief?'); return false;">
+<i class="bi bi-compass fs-2" style="color: #A6192E;"></i>
+<h5>Welcome Aboard</h5>
+</a>
+</div>
+<div class="col-4 col-sm-3 col-md-2">
+<a href="#ask-ai" onclick="handleUserPrompt('Where can I purchase Marine Corps uniform items?'); return false;">
+<i class="bi bi-bag-check fs-2" style="color: #0C2340;"></i>
+<h5>MCX &amp; Uniforms</h5>
+</a>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer with Self-Contained CONUS Map Diagram & OCONUS List -->
+<footer class="mccs-footer-map-section text-light pt-4 pb-5">
+<div class="container">
+<!-- Top Row: Active Installation Info & 988 Crisis Line -->
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+<div>
+<strong id="footerTitle" class="fs-6 ubuntu-bold text-white">Marine Corps Community Services (MCCS) — Quantico</strong>
+<div class="small text-white-50">Select any installation on the CONUS map diagram or from the OCONUS &amp; Recruiting list to switch sites.</div>
+</div>
+<div class="d-flex align-items-center gap-2">
+<a href="https://www.veteranscrisisline.net/" target="_blank" class="btn btn-sm btn-danger fw-bold px-3">
+Military/Veterans Crisis Line: DIAL 988
+</a>
+</div>
+</div>
+
+<div class="row g-3 align-items-stretch">
+<!-- LEFT: Streamlined CONUS Map Diagram (16 Continental U.S. Installations) -->
+<div class="col-12 col-lg-8">
+<div class="mccs-conus-card">
+<div class="mccs-panel-header">
+<div class="d-flex align-items-center gap-2">
+<i class="bi bi-geo-alt-fill text-danger"></i>
+<span class="small fw-bold text-uppercase" style="letter-spacing: 0.06em;">CONUS Installations Map (Continental U.S.)</span>
+</div>
+<span class="badge rounded-pill bg-secondary bg-opacity-25 text-light border border-secondary border-opacity-50" style="font-size: 0.68rem;">Click a pin or label</span>
+</div>
+<div class="mccs-conus-svg-wrap">
+<svg id="mccsConusSvg" class="mccs-conus-svg" viewBox="0 0 820 420" role="img" aria-label="CONUS Map Diagram of MCCS Installations">
+<!-- Subtle Lat/Long Reference Grid -->
+<line class="conus-grid-line" x1="60" y1="110" x2="760" y2="110" />
+<line class="conus-grid-line" x1="60" y1="210" x2="760" y2="210" />
+<line class="conus-grid-line" x1="60" y1="310" x2="760" y2="310" />
+<line class="conus-grid-line" x1="230" y1="40" x2="230" y2="380" />
+<line class="conus-grid-line" x1="430" y1="40" x2="430" y2="380" />
+<line class="conus-grid-line" x1="610" y1="40" x2="610" y2="380" />
+
+<!-- Stylized Continental United States (CONUS) Outline -->
+<path class="conus-land-outline" d="M 155,48 L 245,55 L 350,60 L 445,62 L 505,78 L 545,98 L 575,95 L 620,115 L 672,92 L 712,62 L 736,74 L 724,112 L 705,132 L 712,150 L 688,175 L 674,208 L 684,230 L 664,258 L 636,288 L 624,316 L 638,358 L 620,372 L 598,332 L 566,320 L 520,326 L 486,342 L 456,336 L 418,356 L 392,382 L 368,365 L 348,325 L 312,315 L 265,310 L 208,300 L 162,272 L 138,215 L 132,145 L 142,88 Z" />
+
+<!-- Subtle Coast/Region Watermarks -->
+<text class="conus-region-label" x="235" y="160">WEST</text>
+<text class="conus-region-label" x="565" y="195">EAST</text>
+
+<!-- Dynamic Pins & Callout Labels Injected by JS -->
+<g id="conusMapNodesGroup"></g>
+</svg>
+</div>
+<div class="mccs-map-legend">
+<div>
+<span class="me-3"><span class="mccs-legend-dot" style="background: #f59e0b;"></span>Active Site: <strong id="footerMapActiveName" class="text-white">Quantico</strong></span>
+<span><span class="mccs-legend-dot" style="background: #A6192E;"></span>MCCS Installation</span>
+</div>
+<div class="text-white-50">16 Continental U.S. Sites</div>
+</div>
+</div>
+</div>
+
+<!-- RIGHT: OCONUS (Indo-Pacific) & Recruiting Regions Directory List -->
+<div class="col-12 col-lg-4">
+<div class="mccs-oconus-card">
+<div class="mccs-panel-header">
+<div class="d-flex align-items-center gap-2">
+<i class="bi bi-globe2 text-info"></i>
+<span class="small fw-bold text-uppercase" style="letter-spacing: 0.06em;">OCONUS &amp; Recruiting Sites</span>
+</div>
+<span class="badge rounded-pill bg-secondary bg-opacity-25 text-light border border-secondary border-opacity-50" style="font-size: 0.68rem;">8 Sites</span>
+</div>
+<div class="mccs-oconus-body">
+<div>
+<div class="mccs-oconus-group-title"><i class="bi bi-compass"></i> OCONUS / Indo-Pacific Installations</div>
+<div id="footerOconusList" class="mccs-oconus-grid"></div>
+</div>
+<div>
+<div class="mccs-oconus-group-title"><i class="bi bi-award"></i> Marine Corps Recruiting Regions</div>
+<div id="footerRecruitingList" class="mccs-oconus-grid"></div>
+</div>
+<div class="pt-2 border-top border-secondary border-opacity-25 d-flex justify-content-between align-items-center small text-white-50">
+<span>Need full search?</span>
+<button type="button" class="btn btn-sm btn-outline-light py-0 px-2" style="font-size: 0.7rem;" data-bs-toggle="modal" data-bs-target="#locationModal">
+Open All 24 Sites Modal
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</footer>
+<!-- Floating Trigger -->
+<button id="floatingAskAiBtn" type="button" class="mccs-floating-ai-btn" aria-label="Open Semper SI">
+<span class="mccs-online-dot"></span>
+<i class="bi bi-stars"></i>
+<span>Ask AI</span>
+</button>
+<button type="button" class="btn-feedback" onclick="alert('Official USMC Feedback Survey Modal')">
+<i class="bi bi-hand-thumbs-up-fill"></i>
+<span>Share your feedback</span>
+</button>
+<!-- ======================= POPUP CHAT WINDOW ======================= -->
+<aside id="mccsChatPopup" class="mccs-chat-popup" aria-label="Semper SI">
+<!-- Header -->
+<div class="mccs-chat-header">
+<div class="d-flex align-items-center gap-2">
+<i class="bi bi-stars text-warning fs-5"></i>
+<div>
+<div id="chatAssistantTitle" class="fw-bold" style="font-size: 0.95rem; line-height: 1.2;">Semper SI</div>
+</div>
+</div>
+<div class="d-flex align-items-center gap-2">
+<button type="button" class="btn btn-sm text-white p-0 border-0" data-bs-toggle="modal" data-bs-target="#locationModal" title="Switch Installation">
+<i class="bi bi-globe-americas text-white-50 fs-6"></i>
+</button>
+<button type="button" id="closeChatPopupBtn" class="btn-close btn-close-white" style="font-size: 0.7rem;"></button>
+</div>
+</div>
+<!-- 24/7 Crisis Strip -->
+<div class="mccs-crisis-strip">
+<span><strong id="crisisUrgentLabel">Urgent:</strong> <a href="tel:988">Dial 988</a></span>
+<span id="crisisSaprPhone"><a href="tel:+17034329999">SAPR 24/7 (703-432-9999)</a></span>
+</div>
+<!-- Chat Body -->
+<div id="mccsChatBody" class="mccs-chat-body"></div>
+<!-- Footer -->
+<div class="mccs-chat-footer">
+<form id="mccsChatForm" class="mccs-chat-input-row">
+<input type="text" id="mccsChatInput" class="mccs-chat-input" placeholder="Ask about fitness, childcare, or other bases..." autocomplete="off">
+<button type="submit" id="mccsSendBtn" class="mccs-chat-send">Ask</button>
+</form>
+</div>
+</aside>
+<!-- Bootstrap Bundle JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- ======================= MULTI-INSTALLATION & BILINGUAL CHATBOT ENGINE ======================= -->
+<script>
+// --- 1. API CONFIGURATION (Hardcoded credentials, no UI drawer) ---
+const GENAI_MIL_CONFIG = {
+endpoint: "https://api.genai.mil/v1/chat/completions",
+apiKey: "STARK_mIspraTj4ej1sI9ydIzQOkcPBbIQ299I-oEWoMKm6wE",
+model: "gemini-3.8-flash-withtools",
+
+// Keep this a STRING. It is larger than Number.MAX_SAFE_INTEGER, so Number(),
+// parseInt(), or an unquoted JSON number would silently round it to a different ID.
+agentId: "1617805845440299044",
+
+// How the API selects the agent. Check the GenAI.mil API docs and set ONE mode:
+//   "body"  -> adds { [agentField]: agentId } to the request body (model stays as-is)
+//   "model" -> sends agentModelPrefix + agentId as the "model" value
+//   "path"  -> posts to agentEndpoint with {agentId} filled in
+// agentField, agentModelPrefix and agentEndpoint are PLACEHOLDERS, not documented values.
+// An API that ignores unknown fields will still answer from the base model, so confirm
+// with the canary test after switching.
+agentRouting: "body",
+agentField: "agent_id",
+agentModelPrefix: "",
+agentEndpoint: "https://api.genai.mil/v1/agents/{agentId}/chat/completions",
+
+// The agent's own instructions are the master prompt, so the page does NOT send its
+// own system message (it would compete with or override the agent's). Set true only
+// as a fallback if agent routing doesn't work and you want a persona on the base model.
+sendSystemPrompt: false,
+
+// Ask the agent to end each reply with "FOLLOWUPS: q1 | q2 | q3" and turn that line into
+// the suggestion buttons. Falls back to the static buttons whenever the line is missing.
+dynamicFollowUps: true,
+
+timeoutMs: 45000, // agent calls (grounding/tools) run slower than a bare model call
+debug: true       // logs routing to the console (never the key) and shows API errors in chat
+};
+if (typeof GENAI_MIL_CONFIG.agentId !== "string") {
+console.error("[MCCS] agentId must be a STRING, e.g. \"1617805845440299044\"");
+}
+const activeApiKey = localStorage.getItem("mccs_api_key") || GENAI_MIL_CONFIG.apiKey;
+const activeEndpoint = localStorage.getItem("mccs_endpoint") || GENAI_MIL_CONFIG.endpoint;
+let currentBaseKey = "quantico";   // the MCCS site whose page is currently showing
+let currentLanguage = localStorage.getItem("mccs_chat_lang") || "en";
+// --- 2. INSTALLATION PROFILES ---
+// Every installation on the MCCS "Choose Your Location" list (usmc-mccs.org), plus Camp Blaz (Guam).
+// 24/7 SAPR numbers are from each installation's official SAPR page.
+// badgeText / headline / subtext / shortUpper are filled in automatically when not set.
+const INSTALLATIONS = {
+// ---------- WEST ----------
+pendleton: {
+key: "pendleton", region: "west",
+name: "Camp Pendleton", shortLabel: "Pendleton",
+city: "Oceanside, California", areas: "Mainside, Pacific Views, Del Mar, San Onofre",
+timeZone: "America/Los_Angeles",
+badgeText: "MCCS CAMP PENDLETON",
+headline: "Strengthening Marine & Family Readiness at Pendleton",
+subtext: "Click 'Ask AI' to explore Camp Pendleton programs, services, and facilities.",
+saprPhone: "760-500-1707", saprTel: "+17605001707",
+baseUrl: "https://pendleton.usmc-mccs.org",
+keywords: ["pendleton", "pendelton", "oceanside", "mainside", "san onofre", "del mar beach", "paige fieldhouse", "pacific views", "leatherneck lanes"]
+},
+miramar: {
+key: "miramar", region: "west",
+name: "MCAS Miramar", shortLabel: "Miramar",
+city: "San Diego, California", areas: "Home of 3d Marine Aircraft Wing",
+timeZone: "America/Los_Angeles",
+saprPhone: "858-864-2815", saprTel: "+18588642815",
+baseUrl: "https://miramar.usmc-mccs.org",
+keywords: ["miramar", "mcas miramar"]
+},
+mcrdsandiego: {
+key: "mcrdsandiego", region: "west",
+name: "MCRD San Diego", shortLabel: "MCRD San Diego",
+city: "San Diego, California", areas: "Marine Corps Recruit Depot San Diego",
+timeZone: "America/Los_Angeles",
+saprPhone: "619-846-6040", saprTel: "+16198466040",
+baseUrl: "http://www.mccsmcrd.com",
+keywords: ["mcrd san diego", "mcrd sd", "recruit depot san diego"]
+},
+twentyninepalms: {
+key: "twentyninepalms", region: "west",
+name: "Twentynine Palms", shortLabel: "Twentynine Palms", shortUpper: "29 PALMS",
+city: "Twentynine Palms, California", areas: "Marine Corps Air Ground Combat Center (MCAGCC)",
+timeZone: "America/Los_Angeles",
+badgeText: "MCCS TWENTYNINE PALMS — MCAGCC",
+headline: "Supporting Marines & Families at the Combat Center",
+subtext: "Click 'Ask AI' to explore MCAGCC Twentynine Palms programs, services, and facilities.",
+saprPhone: "760-799-0273", saprTel: "+17607990273",
+baseUrl: "https://29palms.usmc-mccs.org",
+keywords: ["twentynine palms", "29 palms", "29palms", "mcagcc", "combat center"]
+},
+yuma: {
+key: "yuma", region: "west",
+name: "MCAS Yuma", shortLabel: "Yuma",
+city: "Yuma, Arizona", areas: "Marine Corps Air Station Yuma",
+timeZone: "America/Phoenix",
+saprPhone: "928-941-3601", saprTel: "+19289413601",
+baseUrl: "https://yuma.usmc-mccs.org",
+keywords: ["yuma", "mcas yuma", "arizona"]
+},
+barstow: {
+key: "barstow", region: "west",
+name: "MCLB Barstow", shortLabel: "Barstow",
+city: "Barstow, California", areas: "Marine Corps Logistics Base Barstow",
+timeZone: "America/Los_Angeles",
+saprPhone: "760-577-6036", saprTel: "+17605776036",
+baseUrl: "https://barstow.usmc-mccs.org",
+keywords: ["barstow", "mclb barstow", "yermo", "nebo"]
+},
+bridgeport: {
+key: "bridgeport", region: "west",
+name: "MWTC Bridgeport", shortLabel: "Bridgeport",
+city: "Bridgeport, California", areas: "Mountain Warfare Training Center",
+timeZone: "America/Los_Angeles",
+// Bridgeport's SAPR page lists the DoD Safe Helpline as its 24/7 line
+saprLabel: "DoD Safe Helpline 24/7", saprPhone: "877-995-5247", saprTel: "+18779955247",
+baseUrl: "https://bridgeport.usmc-mccs.org",
+keywords: ["bridgeport", "mwtc", "mountain warfare"]
+},
+// ---------- EAST ----------
+lejeune: {
+key: "lejeune", region: "east",
+name: "Camp Lejeune", shortLabel: "Lejeune",
+city: "Jacksonville, North Carolina", areas: "Wallace Creek, French Creek, MCAS New River, Onslow Beach",
+timeZone: "America/New_York",
+badgeText: "MCCS LEJEUNE-NEW RIVER",
+headline: "Supporting Marines & Families at Lejeune-New River",
+subtext: "Click 'Ask AI' to explore Camp Lejeune & MCAS New River programs and services.",
+saprPhone: "910-750-5852", saprTel: "+19107505852",
+baseUrl: "https://lejeunenewriver.usmc-mccs.org",
+keywords: ["lejeune", "new river", "jacksonville", "wallace creek", "french creek", "onslow beach", "courthouse bay", "tarawa terrace", "stone bay", "gottschalk"]
+},
+cherrypoint: {
+key: "cherrypoint", region: "east",
+name: "MCAS Cherry Point", shortLabel: "Cherry Point",
+city: "Havelock, North Carolina", areas: "Marine Corps Air Station Cherry Point",
+timeZone: "America/New_York",
+saprPhone: "252-665-4713", saprTel: "+12526654713",
+baseUrl: "https://cherrypoint.usmc-mccs.org",
+keywords: ["cherry point", "mcas cherry point", "havelock"]
+},
+quantico: {
+key: "quantico", region: "east",
+name: "Quantico", shortLabel: "Quantico",
+city: "Quantico, Virginia", areas: "Barber Physical Activity Center, The Crossroads, OCS & TBS",
+timeZone: "America/New_York",
+badgeText: "MCCS QUANTICO — CROSSROADS OF THE CORPS",
+headline: "Serving the Crossroads of the Marine Corps at Quantico",
+subtext: "Click 'Ask AI' to explore MCB Quantico programs, TBS/OCS support, and facilities.",
+saprPhone: "703-432-9999", saprTel: "+17034329999",
+baseUrl: "https://quantico.usmc-mccs.org",
+keywords: ["quantico", "barber gym", "barber physical", "liversedge", "the basic school", "tbs", "ocs", "marine corps university", "camp upshur"]
+},
+hendersonhall: {
+key: "hendersonhall", region: "east",
+name: "Henderson Hall", shortLabel: "Henderson Hall",
+city: "Arlington, Virginia", areas: "Headquarters Marine Corps, Henderson Hall",
+timeZone: "America/New_York",
+saprPhone: "571-205-1298", saprTel: "+15712051298",
+baseUrl: "https://hendersonhall.usmc-mccs.org",
+keywords: ["henderson hall"]
+},
+eighthandi: {
+key: "eighthandi", region: "east",
+name: "Marine Barracks 8th & I", shortLabel: "8th & I",
+city: "Washington, D.C.", areas: "Marine Barracks Washington",
+timeZone: "America/New_York",
+saprPhone: "202-705-6519", saprTel: "+12027056519",
+baseUrl: "https://8thandi.usmc-mccs.org",
+keywords: ["8th & i", "8th and i", "8th and eye", "marine barracks washington"]
+},
+hamptonroads: {
+key: "hamptonroads", region: "east",
+name: "Hampton Roads", shortLabel: "Hampton Roads",
+city: "Norfolk, Virginia", areas: "Serving Marines and families across the Hampton Roads area",
+timeZone: "America/New_York",
+saprPhone: "757-402-2569", saprTel: "+17574022569",
+baseUrl: "https://hamptonroads.usmc-mccs.org",
+keywords: ["hampton roads", "norfolk", "portsmouth", "virginia beach", "chesapeake"]
+},
+beaufort: {
+key: "beaufort", region: "east",
+name: "MCAS Beaufort", shortLabel: "Beaufort",
+city: "Beaufort, South Carolina", areas: "Marine Corps Air Station Beaufort (MCCS South Carolina)",
+timeZone: "America/New_York",
+saprPhone: "843-321-6009", saprTel: "+18433216009",
+baseUrl: "https://southcarolina.usmc-mccs.org",
+keywords: ["beaufort", "mcas beaufort", "laurel bay"]
+},
+parrisisland: {
+key: "parrisisland", region: "east",
+name: "MCRD Parris Island", shortLabel: "Parris Island",
+city: "Parris Island, South Carolina", areas: "Marine Corps Recruit Depot Parris Island (MCCS South Carolina)",
+timeZone: "America/New_York",
+saprPhone: "843-228-3599", saprTel: "+18432283599",
+baseUrl: "https://southcarolina.usmc-mccs.org",
+keywords: ["parris island", "mcrd parris island"]
+},
+albany: {
+key: "albany", region: "east",
+name: "MCLB Albany", shortLabel: "Albany",
+city: "Albany, Georgia", areas: "Marine Corps Logistics Base Albany",
+timeZone: "America/New_York",
+saprPhone: "229-881-3883", saprTel: "+12298813883",
+baseUrl: "https://albany.usmc-mccs.org",
+keywords: ["albany", "mclb albany"]
+},
+// ---------- PACIFIC ----------
+hawaii: {
+key: "hawaii", region: "pacific",
+name: "MCB Hawaii", shortLabel: "Hawaii",
+city: "Kaneohe Bay, Oahu", areas: "Kaneohe Bay, Camp Smith, Puuloa Range",
+timeZone: "Pacific/Honolulu",
+badgeText: "MCCS HAWAII — MCB HAWAII",
+headline: "Supporting Marines & Families Across Marine Corps Base Hawaii",
+subtext: "Click 'Ask AI' to explore Kaneohe Bay, Camp Smith, and Puuloa programs and services.",
+saprPhone: "808-216-0126", saprTel: "+18082160126",
+baseUrl: "https://hawaii.usmc-mccs.org",
+keywords: ["hawaii", "kaneohe", "kaneohe bay", "mcbh", "camp smith", "puuloa", "oahu", "honolulu"]
+},
+okinawa: {
+key: "okinawa", region: "pacific",
+name: "Okinawa", shortLabel: "Okinawa",
+city: "Okinawa, Japan", areas: "Camp Foster, Butler, Kinser, Courtney, Hansen, Schwab, MCAS Futenma, Camp Gonsalves (JWTC)",
+timeZone: "Asia/Tokyo",
+badgeText: "MCCS OKINAWA — III MEF / MCIPAC",
+headline: "Supporting Marines & Families Across Okinawa, Japan",
+subtext: "Click 'Ask AI' to explore Camp Foster, Kinser, Courtney, Hansen, Schwab, MCAS Futenma, and Camp Gonsalves (JWTC) services.",
+// Official 24/7 Okinawa helpline: 098-970-HOPE (DSN 645-HOPE)
+saprPhone: "098-970-4673", saprTel: "+81989704673",
+baseUrl: "https://www.okinawa.usmc-mccs.org",
+keywords: ["okinawa", "camp foster", "camp butler", "camp kinser", "camp courtney", "camp hansen", "camp schwab", "futenma", "mcas futenma", "camp gonsalves", "gonsalves", "gonzalves", "jwtc", "jungle warfare", "okuma", "sofa license"]
+},
+iwakuni: {
+key: "iwakuni", region: "pacific",
+name: "MCAS Iwakuni", shortLabel: "Iwakuni",
+city: "Iwakuni, Japan", areas: "Marine Corps Air Station Iwakuni",
+timeZone: "Asia/Tokyo",
+saprPhone: "080-5865-3566", saprTel: "+818058653566",
+baseUrl: "https://iwakuni.usmc-mccs.org",
+keywords: ["iwakuni", "mcas iwakuni"]
+},
+campfuji: {
+key: "campfuji", region: "pacific",
+name: "Camp Fuji", shortLabel: "Camp Fuji",
+city: "Gotemba, Japan", areas: "Combined Arms Training Center (CATC) Camp Fuji",
+timeZone: "Asia/Tokyo",
+saprPhone: "098-970-4673", saprTel: "+81989704673",
+baseUrl: "https://campfuji.usmc-mccs.org",
+keywords: ["camp fuji", "catc fuji", "gotemba"]
+},
+mujuk: {
+key: "mujuk", region: "pacific",
+name: "Camp Mujuk", shortLabel: "Mujuk",
+city: "Pohang, South Korea", areas: "Camp Mujuk, Republic of Korea",
+timeZone: "Asia/Seoul",
+// Shares the MCIPAC 24/7 line (DSN 315-645-HOPE); international format for Korean phones
+saprPhone: "+81-98-970-4673", saprTel: "+81989704673",
+baseUrl: "https://mujuk.usmc-mccs.org",
+keywords: ["mujuk", "camp mujuk", "pohang", "korea"]
+},
+campblaz: {
+key: "campblaz", region: "pacific",
+name: "Camp Blaz (Guam)", shortLabel: "Guam", shortUpper: "GUAM",
+city: "Dededo, Guam", areas: "Marine Corps Base Camp Blaz (official base site; not on the MCCS location list)",
+timeZone: "Pacific/Guam",
+badgeText: "MARINE CORPS BASE CAMP BLAZ — GUAM",
+saprLabel: "DoD Safe Helpline 24/7", saprPhone: "877-995-5247", saprTel: "+18779955247",
+baseUrl: "https://www.mcbblaz.marines.mil",
+keywords: ["guam", "camp blaz", "blaz", "dededo", "finegayan"]
+},
+// ---------- RECRUITING ----------
+err: {
+key: "err", region: "recruiting",
+name: "Eastern Recruiting Region", shortLabel: "Eastern Recruiting",
+city: "Parris Island, South Carolina", areas: "Marine Corps recruiters and families in the eastern U.S.",
+timeZone: "America/New_York",
+saprPhone: "843-228-3599", saprTel: "+18432283599",
+baseUrl: "https://err.usmc-mccs.org",
+keywords: ["eastern recruiting region", "eastern recruiting"]
+},
+wrr: {
+key: "wrr", region: "recruiting",
+name: "Western Recruiting Region", shortLabel: "Western Recruiting",
+city: "San Diego, California", areas: "Marine Corps recruiters and families in the western U.S.",
+timeZone: "America/Los_Angeles",
+saprPhone: "619-846-6040", saprTel: "+16198466040",
+baseUrl: "https://wrr.usmc-mccs.org",
+keywords: ["western recruiting region", "western recruiting"]
+}
+};
+// Fill in page text that wasn't set by hand, and build the 24/7 SAPR link for the chat window
+Object.values(INSTALLATIONS).forEach(i => {
+i.shortUpper = i.shortUpper || i.shortLabel.toUpperCase();
+i.badgeText = i.badgeText || `MCCS ${i.name.toUpperCase()}`;
+i.headline = i.headline || `Supporting Marines & Families at ${i.name}`;
+i.subtext = i.subtext || `Click 'Ask AI' to explore ${i.name} programs, services, and facilities.`;
+i.saprHtml = `<a href="tel:${i.saprTel}">${i.saprLabel || "SAPR 24/7"} (${i.saprPhone})</a>`;
+});
+
+// --- SELF-CONTAINED CONUS SVG MAP DIAGRAM & OCONUS LIST ---
+// Pin coordinates (px, py) on the 820x420 CONUS SVG canvas, plus non-overlapping callout label box positions (lx, ly, w)
+const CONUS_DIAGRAM_NODES = [
+// West Coast & Southwest
+{ key: "bridgeport",      px: 158, py: 185, lx: 14,  ly: 142, w: 118, align: "left" },
+{ key: "barstow",         px: 184, py: 244, lx: 14,  ly: 176, w: 118, align: "left" },
+{ key: "twentyninepalms", px: 196, py: 256, lx: 14,  ly: 210, w: 118, align: "left" },
+{ key: "pendleton",       px: 168, py: 268, lx: 14,  ly: 244, w: 118, align: "left" },
+{ key: "miramar",         px: 172, py: 279, lx: 14,  ly: 278, w: 118, align: "left" },
+{ key: "mcrdsandiego",    px: 170, py: 289, lx: 14,  ly: 312, w: 118, align: "left" },
+{ key: "yuma",            px: 214, py: 288, lx: 155, ly: 342, w: 104, align: "left" },
+// East Coast & Southeast
+{ key: "eighthandi",      px: 668, py: 182, lx: 688, ly: 76,  w: 118, align: "right" },
+{ key: "hendersonhall",   px: 663, py: 187, lx: 688, ly: 110, w: 118, align: "right" },
+{ key: "quantico",        px: 658, py: 196, lx: 688, ly: 144, w: 118, align: "right" },
+{ key: "hamptonroads",    px: 674, py: 214, lx: 688, ly: 178, w: 118, align: "right" },
+{ key: "cherrypoint",     px: 668, py: 242, lx: 688, ly: 212, w: 118, align: "right" },
+{ key: "lejeune",         px: 658, py: 252, lx: 688, ly: 246, w: 118, align: "right" },
+{ key: "beaufort",        px: 626, py: 284, lx: 688, ly: 280, w: 118, align: "right" },
+{ key: "parrisisland",    px: 622, py: 292, lx: 688, ly: 314, w: 118, align: "right" },
+{ key: "albany",          px: 576, py: 306, lx: 688, ly: 348, w: 118, align: "right" }
+];
+
+function renderFooterMapAndLists() {
+const activeNameEl = document.getElementById("footerMapActiveName");
+if (activeNameEl && INSTALLATIONS[currentBaseKey]) {
+activeNameEl.textContent = INSTALLATIONS[currentBaseKey].name;
+}
+
+// 1) Render CONUS SVG Pins & Callout Labels
+const nodesGroup = document.getElementById("conusMapNodesGroup");
+if (nodesGroup) {
+nodesGroup.innerHTML = CONUS_DIAGRAM_NODES.map(n => {
+const inst = INSTALLATIONS[n.key];
+if (!inst) return "";
+const isAct = n.key === currentBaseKey;
+const anchorX = n.align === "left" ? (n.lx + n.w) : n.lx;
+const anchorY = n.ly + 12;
+const textX = n.lx + (n.w / 2);
+return `
+<g class="conus-node${isAct ? " is-active" : ""}" data-site="${n.key}" role="button" tabindex="0" aria-label="Switch to ${escapeHtml(inst.name)} (${escapeHtml(inst.city)})">
+<title>${escapeHtml(inst.name)} — ${escapeHtml(inst.city)}</title>
+<line class="conus-leader-line" x1="${n.px}" y1="${n.py}" x2="${anchorX}" y2="${anchorY}" />
+<circle class="conus-pin-pulse" cx="${n.px}" cy="${n.py}" r="6" />
+<circle class="conus-pin-circle" cx="${n.px}" cy="${n.py}" r="${isAct ? 7.5 : 5.5}" />
+<rect class="conus-label-box" x="${n.lx}" y="${n.ly}" width="${n.w}" height="24" />
+<text class="conus-label-text" x="${textX}" y="${n.ly + 12.5}" text-anchor="middle">${escapeHtml(inst.shortLabel)}</text>
+</g>`;
+}).join("");
+}
+
+// 2) Render OCONUS (Pacific) List
+const oconusEl = document.getElementById("footerOconusList");
+if (oconusEl) {
+const pacificSites = Object.values(INSTALLATIONS).filter(i => i.region === "pacific");
+oconusEl.innerHTML = pacificSites.map(i => {
+const isAct = i.key === currentBaseKey;
+return `<button type="button" class="mccs-oconus-btn${isAct ? " is-active" : ""}" data-site="${i.key}">
+<span class="inst-name">
+<span>${escapeHtml(i.shortLabel)}</span>
+<i class="bi ${isAct ? "bi-check-circle-fill" : "bi-geo-alt"}"></i>
+</span>
+<span class="inst-loc">${escapeHtml(i.city)}</span>
+</button>`;
+}).join("");
+}
+
+// 3) Render Recruiting Regions List
+const recEl = document.getElementById("footerRecruitingList");
+if (recEl) {
+const recSites = Object.values(INSTALLATIONS).filter(i => i.region === "recruiting");
+recEl.innerHTML = recSites.map(i => {
+const isAct = i.key === currentBaseKey;
+return `<button type="button" class="mccs-oconus-btn${isAct ? " is-active" : ""}" data-site="${i.key}">
+<span class="inst-name">
+<span>${escapeHtml(i.shortLabel)}</span>
+<i class="bi ${isAct ? "bi-check-circle-fill" : "bi-Compass"}"></i>
+</span>
+<span class="inst-loc">${escapeHtml(i.city)}</span>
+</button>`;
+}).join("");
+}
+}
+const REGIONS = [
+{ key: "west", label: "West", labelEs: "Oeste" },
+{ key: "east", label: "East", labelEs: "Este" },
+{ key: "pacific", label: "Pacific", labelEs: "Pacífico" },
+{ key: "recruiting", label: "Recruiting", labelEs: "Reclutamiento" }
+];
+function sitesByRegion() {
+return REGIONS
+.map(r => ({ ...r, sites: Object.values(INSTALLATIONS).filter(i => i.region === r.key) }))
+.filter(r => r.sites.length > 0);
+}
+const TZ_ABBR = { "Asia/Tokyo": "JST", "Asia/Seoul": "KST", "Pacific/Guam": "ChST" };
+function localTime(inst) {
+try {
+const t = new Date().toLocaleTimeString("en-US", { timeZone: inst.timeZone, hour: "numeric", minute: "2-digit", timeZoneName: "short" });
+return TZ_ABBR[inst.timeZone] ? t.replace(/GMT[+-]\d+/, TZ_ABBR[inst.timeZone]) : t;
+} catch (e) { return ""; }
+}
+// --- SITE SELECTORS ("All sites" modal, menu, footer) ---
+function renderSiteSelectors() {
+const groups = sitesByRegion();
+// 1) "All sites" modal (opened from the location button in the header)
+renderLocationModal();
+// 2) Menu, grouped by region
+const mega = document.getElementById("megaMenuSites");
+if (mega) {
+mega.innerHTML = groups.map(g => `
+<div class="w-100 small fw-bold text-uppercase text-secondary mt-1" style="font-size: 0.65rem; letter-spacing: 0.08em;">${g.label}</div>
+${g.sites.map(i => `<button type="button" class="btn btn-sm ${i.key === currentBaseKey ? "btn-dark" : "btn-outline-dark"}" data-bs-dismiss="offcanvas" data-site="${i.key}">${escapeHtml(i.name)}</button>`).join("")}`).join("");
+}
+// 3) Self-Contained CONUS Map Diagram & OCONUS List in Footer
+renderFooterMapAndLists();
+}
+function renderLocationModal() {
+const wrap = document.getElementById("locModalGroups");
+if (!wrap) return;
+const searchEl = document.getElementById("locSearch");
+const q = (searchEl ? searchEl.value : "").trim().toLowerCase();
+const matches = i => !q || [i.name, i.shortLabel, i.city, i.areas, ...i.keywords].join(" ").toLowerCase().includes(q);
+const groups = sitesByRegion()
+.map(g => ({ ...g, sites: g.sites.filter(matches) }))
+.filter(g => g.sites.length > 0);
+const currentEl = document.getElementById("locModalCurrent");
+if (currentEl) currentEl.textContent = INSTALLATIONS[currentBaseKey].name;
+const countEl = document.getElementById("locModalCount");
+if (countEl) countEl.textContent = Object.keys(INSTALLATIONS).length;
+wrap.innerHTML = groups.length ? groups.map(g => `
+<div class="mccs-loc-region">${g.label} <span class="count">${g.sites.length}</span></div>
+<div class="row g-2 row-cols-1 row-cols-sm-2 row-cols-lg-4">
+${g.sites.map(i => `
+<div class="col">
+<button type="button" class="mccs-loc-card${i.key === currentBaseKey ? " active" : ""}" data-site="${i.key}" data-bs-dismiss="modal">
+<span class="name">${escapeHtml(i.name)}</span>
+<span class="city"><i class="bi bi-geo-alt"></i> ${escapeHtml(i.city)}</span>
+<span class="areas">${escapeHtml(i.areas)}</span>
+<span class="meta">
+<span><i class="bi bi-clock"></i> ${localTime(i)}</span>
+<span class="current"><i class="bi bi-check-circle-fill"></i> Current</span>
+</span>
+</button>
+</div>`).join("")}
+</div>`).join("")
+: `<div class="text-center text-secondary py-4">No installations match “${escapeHtml(q)}”.</div>`;
+}
+// ONE assistant for every installation. It makes no up-front assumption: when the user asks
+// a question, it GUESSES the installation from the page they're on and VERIFIES it first
+// ("Just to verify, are you inquiring about Camp Lejeune?"), then answers.
+let confirmedLocation = null;   // installation the user confirmed (or named in a message)
+let confirmedOnPage = null;     // page the user was on when they confirmed (re-verify if it changes)
+let pendingQuestion = null;     // question held back while we verify the location
+let verifyGuess = null;         // installation we asked "are you inquiring about...?" for
+const WELCOME_JOURNEYS = [
+{
+icon: "bi-heart-pulse",
+labelEn: "1. Counseling Services",
+labelEs: "1. Servicios de Consejería",
+promptEn: "Where can I find counseling services?",
+promptEs: "¿Dónde puedo encontrar servicios de consejería?"
+},
+{
+icon: "bi-people",
+labelEn: "2. Childcare (CDC)",
+labelEs: "2. Guardería (CDC)",
+promptEn: "How do I sign up for childcare?",
+promptEs: "¿Cómo inscribo a mi hijo en la guardería?"
+},
+{
+icon: "bi-activity",
+labelEn: "3. Fitness Programs",
+labelEs: "3. Programas de Gimnasio",
+promptEn: "What programs does the fitness center offer?",
+promptEs: "¿Qué programas ofrece el gimnasio?"
+},
+{
+icon: "bi-trophy",
+labelEn: "4. Youth Soccer",
+labelEs: "4. Fútbol Juvenil",
+promptEn: "When does youth soccer registration open?",
+promptEs: "¿Cuándo abren las inscripciones de fútbol juvenil?"
+},
+{
+icon: "bi-compass",
+labelEn: "5. Welcome Aboard",
+labelEs: "5. Bienvenida (PCS)",
+promptEn: "When is the Welcome Aboard brief?",
+promptEs: "¿Cuándo es la sesión de bienvenida (Welcome Aboard)?"
+},
+{
+icon: "bi-bag",
+labelEn: "6. Uniforms (MCX)",
+labelEs: "6. Uniformes (MCX)",
+promptEn: "Where can I purchase Marine Corps uniform items?",
+promptEs: "¿Dónde puedo comprar artículos de uniforme?"
+}
+];
+
+function getFollowUpIcon(text) {
+const t = String(text || "").toLowerCase();
+if (/counsel|mental|chaplain|stress|mflc|ccp|consejer|salud|estr[eé]s/.test(t)) return "bi-heart-pulse";
+if (/child|cdc|daycare|care|kid|school|guarder|niñ|hijo|cuidado/.test(t)) return "bi-people";
+if (/gym|fitness|hitt|pool|aquatic|swim|workout|cac|gimnasio|alberca|piscina/.test(t)) return "bi-activity";
+if (/soccer|sport|youth|coach|league|team|bowling|f[uú]tbol|deporte|juvenil/.test(t)) return "bi-trophy";
+if (/welcome|aboard|pcs|relocat|lending|brief|housing|bienvenida|mudanza/.test(t)) return "bi-compass";
+if (/uniform|mcx|exchange|shop|dress|tailor|orden|comprar|tienda/.test(t)) return "bi-bag";
+if (/hour|time|open|close|schedule|when|horario|hora|abierto|cu[aá]ndo/.test(t)) return "bi-clock";
+if (/where|locat|address|building|bldg|map|find|d[oó]nde|ubicaci|direcci/.test(t)) return "bi-geo-alt";
+if (/call|phone|contact|number|reach|email|llamar|tel[eé]fono|n[uú]mero|contacto/.test(t)) return "bi-telephone";
+if (/cost|price|fee|free|pay|rate|costo|precio|gratis|tarifa/.test(t)) return "bi-tag";
+if (/register|sign up|enroll|apply|form|inscrib|registr|requisito/.test(t)) return "bi-clipboard-check";
+return "bi-chat-dots";
+}
+// Picks the string for the current chat language
+function tr(en, es) { return currentLanguage === "es" ? es : en; }
+// --- 3. LANGUAGE DETECTION & PERSISTENCE ---
+// Language is global to the chat, so it carries across every installation/site switch.
+function detectAndSetLanguage(text) {
+const t = text.trim().toLowerCase();
+const hasSpanishPunctOrAccents = /[¿¡áéíóúñü]/i.test(t);
+const spanishWords = [
+"dónde", "donde", "cómo", "como", "cuándo", "cuando", "qué", "que",
+"puedo", "inscribir", "guardería", "guarderia", "hijo", "hija", "niño", "niña",
+"niños", "gimnasio", "horarios", "horario", "consejería", "consejeria",
+"uniformes", "uniforme", "deportes", "fútbol", "futbol", "bienvenida",
+"ayuda", "necesito", "estoy", "quiero", "hay", "para", "por favor",
+"gracias", "hola", "quedarme", "programas", "ofrece", "cambiar", "transferir",
+"asistente", "cuidado", "infantil", "salud", "mental", "estrés", "estres",
+"alberca", "piscina", "biblioteca", "boliche", "bolos", "esposo", "esposa",
+"si", "correcto", "exacto", "claro"
+];
+const englishWords = [
+"where", "when", "what", "how", "can", "who", "why", "is", "are", "do",
+"does", "the", "for", "with", "about", "sign", "up", "childcare",
+"counseling", "fitness", "gym", "hours", "soccer", "welcome", "aboard",
+"uniform", "items", "stay", "programs", "offer", "husband", "wife",
+"closest", "pool", "library", "bowling", "efmp", "weekend", "thanksgiving",
+"yes", "yeah", "yep", "correct", "thanks", "please"
+];
+const tokens = t.split(/[^a-záéíóúñü0-9]+/i).filter(Boolean);
+let esScore = hasSpanishPunctOrAccents ? 2 : 0;
+let enScore = 0;
+tokens.forEach(w => {
+if (spanishWords.includes(w)) esScore += 2;
+if (englishWords.includes(w)) enScore += 2;
+});
+if (esScore > enScore) {
+currentLanguage = "es";
+} else if (enScore > esScore) {
+currentLanguage = "en";
+}
+localStorage.setItem("mccs_chat_lang", currentLanguage);
+updateChatLanguageChrome();
+return currentLanguage;
+}
+// Installation for the SAPR line: the confirmed one (while still on that page), else the page's
+function currentInterestKey() {
+return (confirmedLocation && confirmedOnPage === currentBaseKey) ? confirmedLocation : currentBaseKey;
+}
+function updateChatLanguageChrome() {
+const titleEl = document.getElementById("chatAssistantTitle");
+const inputEl = document.getElementById("mccsChatInput");
+const sendEl = document.getElementById("mccsSendBtn");
+const urgentEl = document.getElementById("crisisUrgentLabel");
+const saprEl = document.getElementById("crisisSaprPhone");
+if (titleEl) titleEl.textContent = tr("Semper SI", "Asistente de IA de MCCS");
+if (inputEl) inputEl.placeholder = tr("Ask about fitness, childcare, or other bases...", "Pregunta sobre gimnasio, guardería u otras bases...");
+if (sendEl) sendEl.textContent = tr("Ask", "Enviar");
+if (urgentEl) urgentEl.textContent = tr("Urgent:", "Urgente:");
+if (saprEl) saprEl.innerHTML = INSTALLATIONS[currentInterestKey()].saprHtml;
+}
+// --- 4. SYSTEM PROMPT & REAL-TIME CLOCK CONTEXT ---
+function getLiveDateTimeContext(baseKey) {
+const b = INSTALLATIONS[baseKey];
+const now = new Date();
+const userTz = Intl.DateTimeFormat().resolvedOptions().timeZone || "Local";
+const baseTz = b.timeZone || userTz;
+
+const userDateTime = now.toLocaleString("en-US", {
+weekday: "long",
+year: "numeric",
+month: "long",
+day: "numeric",
+hour: "2-digit",
+minute: "2-digit",
+second: "2-digit",
+timeZoneName: "short"
+});
+
+const baseDateTime = now.toLocaleString("en-US", {
+timeZone: baseTz,
+weekday: "long",
+year: "numeric",
+month: "long",
+day: "numeric",
+hour: "2-digit",
+minute: "2-digit",
+second: "2-digit",
+timeZoneName: "short"
+});
+
+return `[LIVE REAL-TIME CLOCK DATA — User's Local Date & Time (${userTz}): ${userDateTime} | ${b.name} Installation Local Date & Time (${baseTz}): ${baseDateTime} | UTC ISO: ${now.toISOString()}. You HAVE live real-time clock and date access through this context; use it whenever asked for the current time, today's date, day of the week, or whether facilities are currently open.]`;
+}
+
+// ============================================================================
+// CUSTOM AGENT SYSTEM PROMPT (OPTION 2: USER-TURN INJECTION)
+// ============================================================================
+// Paste the exact system prompt / instructions from your Vertex AI Agent here:
+const CUSTOM_AGENT_SYSTEM_PROMPT = `
+You are Semper SI, the official MCCS Virtual Assistant for Marine Corps Community Services.
+Core Directives:
+1. Provide accurate, professional, and military-informed assistance for Marine Corps personnel and families across all installations.
+2. Structure answers using Bottom Line Up Front (BLUF) and Markdown tables whenever comparing options, schedules, or facility features.
+3. Ground all fitness, childcare (CDC), PCS relocation, and recreation details strictly in official installation guidelines.
+4. Maintain a supportive, respectful tone fitting Marine Corps standards.
+`.trim();
+
+// Only sent when GENAI_MIL_CONFIG.sendSystemPrompt is true (fallback persona on the base model)
+function getSystemPrompt() {
+  return CUSTOM_AGENT_SYSTEM_PROMPT;
+}
+
+// Per-turn context sent in the user message (guarantees the gateway cannot strip it)
+function getTurnContext(locKey, assumed) {
+  const page = INSTALLATIONS[currentBaseKey];
+  const loc = INSTALLATIONS[locKey];
+  let locNote;
+
+  if (!assumed) {
+    locNote = `The user has confirmed they are asking about ${loc.name} (${loc.baseUrl}). Answer for ${loc.name}.`;
+    if (page.key !== loc.key) locNote += ` (They are browsing the MCCS ${page.name} site but asked about ${loc.name}.)`;
+  } else {
+    locNote = `The user is on the MCCS ${page.name} page and did not say which installation they mean, so assume ${loc.name} (${loc.baseUrl}). Answer for ${loc.name} and briefly mention that you assumed ${loc.name}.`;
+  }
+  locNote += " If the user names a different Marine Corps installation, answer for that installation instead.";
+
+  const langNote = currentLanguage === "es"
+    ? "Respond entirely in Spanish."
+    : "Respond in English unless the user writes in Spanish.";
+
+  const followUpNote = GENAI_MIL_CONFIG.dynamicFollowUps
+    ? `\n[FORMAT — After your answer, add one final line in exactly this format: FOLLOWUPS: <question 1> | <question 2> | <question 3> — three short follow-up questions (under 12 words each) this user would most likely ask next, based on their question and your answer, written in the same language as your answer. Keep the word FOLLOWUPS in English and write nothing after that line.]`
+    : "";
+
+  // Combines your Agent's Master Prompt with the live Base & Clock Context
+  return `[SYSTEM DIRECTIVE & AGENT INSTRUCTIONS]\n${CUSTOM_AGENT_SYSTEM_PROMPT}\n\n[INSTALLATION CONTEXT — ${locNote} ${langNote}]\n${getLiveDateTimeContext(loc.key)}${followUpNote}`;
+}
+
+let conversationHistory = [
+{ role: "system", content: getSystemPrompt() }
+];
+function hasConversation() {
+return conversationHistory.some(m => m.role === "user");
+}
+// --- 5. DOM ELEMENTS ---
+const chatPopup = document.getElementById("mccsChatPopup");
+const chatBody = document.getElementById("mccsChatBody");
+const chatForm = document.getElementById("mccsChatForm");
+const chatInput = document.getElementById("mccsChatInput");
+const sendBtn = document.getElementById("mccsSendBtn");
+// --- 6. SITE SWITCHING (page only — the assistant and conversation stay the same) ---
+function setConfirmedLocation(key) {
+confirmedLocation = key;
+confirmedOnPage = currentBaseKey;
+updateChatLanguageChrome();
+}
+window.switchInstallation = function(targetBaseKey) {
+if (!INSTALLATIONS[targetBaseKey]) return;
+currentBaseKey = targetBaseKey;
+const b = INSTALLATIONS[targetBaseKey];
+// Update Page DOM
+document.getElementById("pageTitle").textContent = `MCCS ${b.name} — AI Assistant Demo`;
+document.getElementById("brandBaseName").textContent = b.shortUpper;
+document.getElementById("headerLocationBtnText").textContent = b.name;
+document.getElementById("megaMenuTitle").textContent = `MCCS ${b.name} Directory`;
+document.getElementById("heroBadge").textContent = b.badgeText;
+document.getElementById("heroHeadline").textContent = b.headline;
+document.getElementById("heroSubtext").textContent = b.subtext;
+document.getElementById("footerTitle").textContent = `Marine Corps Community Services (MCCS) — ${b.name}`;
+// Refresh every installation selector (modal, menu, footer)
+renderSiteSelectors();
+// Keep the site in the URL so file.html#quantico opens straight to Quantico
+try { history.replaceState(null, "", "#" + targetBaseKey); } catch (e) {}
+// No chat message here: the next question is verified against the new page if needed
+updateChatLanguageChrome();
+};
+// --- 7. CHAT RENDERING FUNCTIONS ---
+function renderLocChip(c) {
+const attr = c.pick
+? `data-loc-pick="${escapeHtml(c.pick)}"`
+: `data-loc-action="${escapeHtml(c.action)}"`;
+return `<button type="button" class="mccs-chip mccs-chip-loc" ${attr}>${escapeHtml(c.label)}</button>`;
+}
+// Bot bubble generated by the page itself (no API call). `html` must be trusted markup.
+function appendLocalBotMessage(html, choices = []) {
+const div = document.createElement("div");
+div.className = "mccs-msg bot";
+let out = `<div>${html}</div>`;
+if (choices.length > 0) {
+out += `<div class="mccs-chips mt-2">${choices.map(renderLocChip).join("")}</div>`;
+}
+div.innerHTML = out;
+chatBody.appendChild(div);
+chatBody.scrollTop = chatBody.scrollHeight;
+}
+function renderInitialMessage() {
+const isEs = currentLanguage === "es";
+chatBody.innerHTML = "";
+const msg = document.createElement("div");
+msg.className = "mccs-msg bot";
+msg.innerHTML = `
+<div>${tr(
+`<strong>Semper Fi!</strong> I'm <strong>Semper SI</strong>, the MCCS AI virtual assistant. How can I help you today?`,
+`<strong>¡Semper Fi!</strong> Soy el <strong>Asistente de IA de MCCS</strong>. ¿En qué puedo ayudarte hoy?`
+)}</div>
+<div class="small text-secondary mt-1">${tr(
+`Select one of the <strong>6 Core Journeys</strong> below or type any question:`,
+`Selecciona uno de los <strong>6 Temas Principales</strong> o escribe cualquier pregunta:`
+)}</div>
+<div class="mccs-journey-grid">
+${WELCOME_JOURNEYS.map(j => {
+const label = isEs ? j.labelEs : j.labelEn;
+const prompt = isEs ? j.promptEs : j.promptEn;
+return `<button type="button" class="mccs-journey-card" data-followup="${escapeHtml(prompt)}">
+<i class="bi ${j.icon}"></i>
+<span>${escapeHtml(label)}</span>
+</button>`;
+}).join("")}
+</div>
+`;
+chatBody.appendChild(msg);
+chatBody.scrollTop = chatBody.scrollHeight;
+}
+// "I'm happy to help! Just to clarify, are you inquiring about X?"
+function appendVerifyPrompt(guessKey) {
+const g = INSTALLATIONS[guessKey];
+const choices = [{ label: tr(`Yes, ${g.name}`, `Sí, ${g.name}`), pick: guessKey }];
+if (confirmedLocation && confirmedLocation !== guessKey) {
+const prev = INSTALLATIONS[confirmedLocation];
+choices.push({ label: tr(`No, ${prev.name}`, `No, ${prev.name}`), pick: confirmedLocation });
+}
+choices.push({ label: tr("A different installation", "Otra instalación"), action: "pick" });
+appendLocalBotMessage(tr(
+`I can absolutely help you with that! Just to verify, are you inquiring about <strong>${g.name}</strong>?`,
+`¡Con gusto te ayudo con eso! Solo para confirmar, ¿tu consulta es sobre <strong>${g.name}</strong>?`
+), choices);
+}
+function renderLocationPicker() {
+const div = document.createElement("div");
+div.className = "mccs-msg bot";
+const prompt = pendingQuestion
+? tr("No problem — which installation are you asking about?", "Sin problema — ¿sobre qué instalación es tu consulta?")
+: tr("Which installation are you asking about?", "¿Sobre qué instalación tienes preguntas?");
+div.innerHTML = `<div>${prompt}</div>` +
+sitesByRegion().map(g => `
+<div class="mt-2 text-secondary fw-bold" style="font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em;">${tr(g.label, g.labelEs)}</div>
+<div class="mccs-chips" style="margin-top: 3px;">${g.sites.map(i => renderLocChip({ label: i.name, pick: i.key })).join("")}</div>`).join("");
+chatBody.appendChild(div);
+chatBody.scrollTop = chatBody.scrollHeight;
+}
+// User confirmed or picked an installation: answer the question we held back
+function confirmAndAsk(key) {
+setConfirmedLocation(key);
+const question = pendingQuestion;
+pendingQuestion = null;
+verifyGuess = null;
+if (question) return sendToAgent(question, key, false);
+appendLocalBotMessage(tr(
+`Got it — <strong>${INSTALLATIONS[key].name}</strong>. What can I help you with?`,
+`Entendido — <strong>${INSTALLATIONS[key].name}</strong>. ¿En qué puedo ayudarte?`
+));
+}
+function appendUserBubble(text) {
+const div = document.createElement("div");
+div.className = "mccs-msg user";
+div.textContent = text;
+chatBody.appendChild(div);
+chatBody.scrollTop = chatBody.scrollHeight;
+}
+function showTypingIndicator() {
+const div = document.createElement("div");
+div.id = "mccsTypingBubble";
+div.className = "mccs-msg bot mccs-typing-indicator";
+div.innerHTML = `
+<span class="mccs-typing-dot"></span>
+<span class="mccs-typing-dot"></span>
+<span class="mccs-typing-dot"></span>
+`;
+chatBody.appendChild(div);
+chatBody.scrollTop = chatBody.scrollHeight;
+}
+function removeTypingIndicator() {
+const el = document.getElementById("mccsTypingBubble");
+if (el) el.remove();
+}
+// --- FOLLOW-UP HELPERS ---
+function escapeHtml(s) {
+return String(s)
+.replace(/&/g, "&amp;")
+.replace(/</g, "&lt;")
+.replace(/>/g, "&gt;")
+.replace(/"/g, "&quot;")
+.replace(/'/g, "&#39;");
+}
+function getStaticFollowUps(locKey) {
+const name = INSTALLATIONS[locKey].name;
+return currentLanguage === "es"
+? [`¿Dónde queda esto en ${name}?`, "¿Cuál es el horario?", "¿A qué número puedo llamar?"]
+: [`Where is this located on ${name}?`, "What are the hours?", "What number can I call?"];
+}
+// Pulls the agent's "FOLLOWUPS: a | b | c" line out of the reply and returns the answer
+// without it. Tolerates bold/italic/backtick wrapping, "Follow-ups:" spelling, and items
+// listed on separate lines instead of pipe-separated. Uses the LAST such line.
+function extractFollowUps(reply) {
+const text = String(reply || "");
+const re = /^[ \t>*_`#-]*follow[- ]?ups?[ \t*_`]*:[ \t*_`]*(.*)$/gim;
+let m, last = null;
+while ((m = re.exec(text)) !== null) last = m;
+if (!last) return { text, followUps: [] };
+const rawItems = last[1].trim()
+? last[1].split("|")
+: text.slice(last.index + last[0].length).split("\n");
+const followUps = rawItems
+.map(s => s
+.replace(/^\s*(?:[-*•]|\d+[.)])\s+/, "")       // list markers: "- ", "1. ", "2) "
+.replace(/^[\s*_`"'“”‘’<]+|[\s*_`"'“”‘’>]+$/g, "") // wrapping quotes / markdown / <>
+)
+.filter(s => s.length > 2 && s.length <= 140)
+.slice(0, 3);
+const answer = text.slice(0, last.index).trim();
+return { text: answer || text, followUps };
+}
+// --- END FOLLOW-UP HELPERS ---
+// --- LOCATION VERIFICATION HELPERS ---
+// Returns the key of the ONE installation a message names (by name or a known area), or null
+// when none or several are named.
+function detectInstallationMention(text) {
+const t = ` ${String(text).toLowerCase()} `;
+const found = Object.values(INSTALLATIONS).filter(inst =>
+inst.keywords.some(k => {
+const esc = k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+return new RegExp(`[^a-z0-9]${esc}[^a-z0-9]`, "i").test(t);
+})
+);
+return found.length === 1 ? found[0].key : null;
+}
+function isNegative(text) {
+return /^\s*(no|nope|nah|not really|negative|incorrect|wrong)(?=[\s.,!]|$)/i.test(text);
+}
+function isAffirmative(text) {
+return /^\s*(yes|yeah|yep|yup|correct|right|that'?s right|sure|sí|si|correcto|exacto|así es|claro)(?=[\s.,!]|$)/i.test(text);
+}
+// --- END LOCATION VERIFICATION HELPERS ---
+function formatContent(text) {
+if (window.marked && typeof window.marked.parse === "function") {
+return marked.parse(text);
+}
+return text.replace(/\n\n/g, "<br><br>").replace(/\n/g, "<br>");
+}
+function appendBotResponse({ reply, cards = [], followUps = [] }) {
+const div = document.createElement("div");
+div.className = "mccs-msg bot";
+const isEs = currentLanguage === "es";
+let html = `<div>${formatContent(reply)}</div>`;
+if (cards.length > 0) {
+const sourcesHeader = isEs ? "Fuentes Oficiales" : "Sources";
+html += `<div class="mt-2 mb-1 text-secondary fw-bold" style="font-size: 0.65rem; text-transform: uppercase;">${sourcesHeader}</div>`;
+html += `<div class="mccs-resource-cards">`;
+cards.forEach(c => {
+const cardTitle = (isEs && c.titleEs) ? c.titleEs : c.title;
+html += `
+<a href="${c.url}" target="_blank" rel="noopener" class="mccs-resource-card">
+<span>${cardTitle}</span>
+<i class="bi bi-box-arrow-up-right"></i>
+</a>
+`;
+});
+html += `</div>`;
+}
+if (followUps.length > 0) {
+const followUpHeader = isEs ? "Sugerencias de seguimiento" : "Suggested Follow-Ups";
+html += `<div class="mt-2 mb-1 text-secondary fw-bold" style="font-size: 0.65rem; text-transform: uppercase;">${followUpHeader}</div>`;
+html += `<div class="mccs-followup-grid">`;
+followUps.forEach((f, idx) => {
+const safe = escapeHtml(f);
+const icon = getFollowUpIcon(f);
+html += `<button type="button" class="mccs-journey-card" data-followup="${safe}">
+<i class="bi ${icon}"></i>
+<span>${idx + 1}. ${safe}</span>
+</button>`;
+});
+html += `</div>`;
+}
+div.innerHTML = html;
+chatBody.appendChild(div);
+chatBody.scrollTop = chatBody.scrollHeight;
+}
+// --- 8. AGENT REQUEST ---
+// Builds the URL and body so the configured agentId is actually sent.
+function buildAgentRequest(apiMessages) {
+const cfg = GENAI_MIL_CONFIG;
+const agentId = String(cfg.agentId);
+let url = activeEndpoint;
+const body = { model: cfg.model, messages: apiMessages };
+switch (cfg.agentRouting) {
+case "body":
+body[cfg.agentField] = agentId;
+break;
+case "model":
+body.model = `${cfg.agentModelPrefix}${agentId}`;
+break;
+case "path":
+url = cfg.agentEndpoint.replace("{agentId}", encodeURIComponent(agentId));
+break;
+default:
+throw new Error(`Unknown agentRouting "${cfg.agentRouting}" (use "body", "model" or "path")`);
+}
+return { url, body };
+}
+async function fetchGenAiResponse(cleanPrompt, locKey, assumed) {
+// Keep the (optional) system prompt in the current language
+if (conversationHistory.length > 0 && conversationHistory[0].role === "system") {
+conversationHistory[0].content = getSystemPrompt();
+}
+conversationHistory.push({ role: "user", content: cleanPrompt });
+
+// Attach location, language, clock and format context to the latest user turn
+const turnContext = getTurnContext(locKey, assumed);
+const outgoing = GENAI_MIL_CONFIG.sendSystemPrompt
+? conversationHistory
+: conversationHistory.filter(m => m.role !== "system");
+const apiMessages = outgoing.map((msg, idx) => {
+if (idx === outgoing.length - 1 && msg.role === "user") {
+return {
+role: "user",
+content: `${turnContext}\n\nUser Question: ${msg.content}`
+};
+}
+return msg;
+});
+
+try {
+const { url, body } = buildAgentRequest(apiMessages);
+if (GENAI_MIL_CONFIG.debug) {
+console.info("[MCCS] → request", {
+url,
+routing: GENAI_MIL_CONFIG.agentRouting,
+agentId: GENAI_MIL_CONFIG.agentId,
+model: body.model,
+agentFieldSent: GENAI_MIL_CONFIG.agentRouting === "body"
+? { [GENAI_MIL_CONFIG.agentField]: body[GENAI_MIL_CONFIG.agentField] }
+: "(n/a)",
+pageSite: currentBaseKey,
+location: locKey,
+locationStatus: assumed ? "assumed (verify skipped)" : "confirmed",
+language: currentLanguage,
+messages: body.messages.length
+});
+}
+const controller = new AbortController();
+const timeoutId = setTimeout(() => controller.abort(), GENAI_MIL_CONFIG.timeoutMs);
+let response;
+try {
+response = await fetch(url, {
+method: "POST",
+headers: {
+"Authorization": `Bearer ${activeApiKey}`,
+"x-api-key": activeApiKey,
+"Content-Type": "application/json"
+},
+body: JSON.stringify(body),
+signal: controller.signal
+});
+} finally {
+clearTimeout(timeoutId);
+}
+if (!response.ok) {
+let detail = "";
+try { detail = (await response.text()).slice(0, 400); } catch (e) {}
+throw new Error(`HTTP ${response.status} ${response.statusText}${detail ? " — " + detail : ""}`);
+}
+const data = await response.json();
+if (GENAI_MIL_CONFIG.debug) {
+console.info("[MCCS] ← response", { model: data.model, id: data.id, keys: Object.keys(data) });
+}
+let botReply = "";
+if (data.choices && data.choices[0] && data.choices[0].message) {
+botReply = data.choices[0].message.content;
+} else if (data.content) {
+botReply = data.content;
+} else {
+botReply = JSON.stringify(data);
+}
+// Raw reply (with its FOLLOWUPS line) stays in history so the agent keeps the format
+conversationHistory.push({ role: "assistant", content: botReply });
+const parsed = GENAI_MIL_CONFIG.dynamicFollowUps
+? extractFollowUps(botReply)
+: { text: botReply, followUps: [] };
+const usedFallback = parsed.followUps.length === 0;
+if (GENAI_MIL_CONFIG.debug) {
+console.info("[MCCS] follow-ups", usedFallback ? "(static fallback)" : "(from agent)", parsed.followUps);
+}
+return {
+reply: parsed.text,
+followUps: usedFallback ? getStaticFollowUps(locKey) : parsed.followUps
+};
+} catch (err) {
+console.warn("API call failed or timed out:", err);
+// Drop the unanswered user turn so a retry doesn't stack duplicate questions
+const last = conversationHistory[conversationHistory.length - 1];
+if (last && last.role === "user" && last.content === cleanPrompt) conversationHistory.pop();
+const b = INSTALLATIONS[locKey];
+const isEs = currentLanguage === "es";
+const debugDetail = GENAI_MIL_CONFIG.debug
+? `\n\n*Debug:* ${err.name === "AbortError" ? `timed out after ${GENAI_MIL_CONFIG.timeoutMs / 1000}s` : err.message}`
+: "";
+return {
+reply: (isEs
+? `Disculpa, hubo un problema al conectar con el Asistente de IA de MCCS. Por favor verifica tu conexión de red o inténtalo de nuevo en un momento.`
+: `Sorry, there was an issue communicating with the MCCS AI Assistant. Please verify your network connection or try again in a moment.`) + debugDetail,
+cards: [
+{ title: `MCCS ${b.name} Official Website`, titleEs: `Sitio Oficial de MCCS ${b.name}`, url: b.baseUrl }
+]
+};
+}
+}
+async function sendToAgent(question, locKey, assumed) {
+chatInput.disabled = true;
+sendBtn.disabled = true;
+showTypingIndicator();
+try {
+const result = await fetchGenAiResponse(question, locKey, assumed);
+removeTypingIndicator();
+appendBotResponse(result);
+} finally {
+chatInput.disabled = false;
+sendBtn.disabled = false;
+chatInput.focus();
+}
+}
+async function handleUserPrompt(promptText) {
+const cleanPrompt = promptText.trim();
+if (!cleanPrompt) return;
+openAiPopup();
+appendUserBubble(cleanPrompt);
+detectAndSetLanguage(cleanPrompt);
+const named = detectInstallationMention(cleanPrompt);
+let assumeKey = null;
+// 1) Reply to our "just to verify" question
+if (pendingQuestion) {
+if (isAffirmative(cleanPrompt) && !named) return confirmAndAsk(verifyGuess);
+if (named && cleanPrompt.length <= 40) return confirmAndAsk(named);   // e.g. "No, Quantico"
+if (isNegative(cleanPrompt) && !named) return renderLocationPicker();
+// They moved on without answering: answer the new question for our guess
+assumeKey = verifyGuess;
+pendingQuestion = null;
+verifyGuess = null;
+}
+// 2) The question names an installation -> no need to verify
+if (named) {
+setConfirmedLocation(named);
+return sendToAgent(cleanPrompt, named, false);
+}
+if (assumeKey) return sendToAgent(cleanPrompt, assumeKey, true);
+// 3) Location already confirmed on this page -> answer
+if (confirmedLocation && confirmedOnPage === currentBaseKey) {
+return sendToAgent(cleanPrompt, confirmedLocation, false);
+}
+// 4) Guess from the page and verify before answering
+pendingQuestion = cleanPrompt;
+verifyGuess = currentBaseKey;
+appendVerifyPrompt(currentBaseKey);
+}
+// --- 9. GLOBAL EVENT HANDLERS ---
+window.openAiPopup = function() {
+chatPopup.classList.add("is-open");
+if (chatBody.children.length === 0) {
+renderInitialMessage();
+}
+setTimeout(() => chatInput.focus(), 150);
+};
+window.handleUserPrompt = handleUserPrompt;
+document.getElementById("headerAskAiBtn").addEventListener("click", () => {
+chatPopup.classList.toggle("is-open");
+if (chatPopup.classList.contains("is-open") && chatBody.children.length === 0) {
+renderInitialMessage();
+}
+});
+document.getElementById("floatingAskAiBtn").addEventListener("click", () => {
+chatPopup.classList.toggle("is-open");
+if (chatPopup.classList.contains("is-open") && chatBody.children.length === 0) {
+renderInitialMessage();
+}
+});
+document.getElementById("headerSearchTrigger").addEventListener("click", openAiPopup);
+document.addEventListener("keydown", (e) => {
+if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+e.preventDefault();
+openAiPopup();
+}
+});
+document.getElementById("closeChatPopupBtn").addEventListener("click", () => {
+chatPopup.classList.remove("is-open");
+});
+chatBody.addEventListener("click", (e) => {
+const pickBtn = e.target.closest("[data-loc-pick]");
+if (pickBtn) {
+appendUserBubble(pickBtn.textContent.trim());
+confirmAndAsk(pickBtn.getAttribute("data-loc-pick"));
+return;
+}
+const actionBtn = e.target.closest("[data-loc-action]");
+if (actionBtn) {
+appendUserBubble(actionBtn.textContent.trim());
+renderLocationPicker();
+return;
+}
+const fBtn = e.target.closest("[data-followup]");
+if (fBtn) {
+handleUserPrompt(fBtn.getAttribute("data-followup"));
+}
+});
+chatForm.addEventListener("submit", (e) => {
+e.preventDefault();
+const val = chatInput.value;
+chatInput.value = "";
+handleUserPrompt(val);
+});
+// Editing the hash (e.g. typing #okinawa in the address bar) switches the site too
+window.addEventListener("hashchange", () => {
+const key = (location.hash || "").replace("#", "").toLowerCase();
+if (INSTALLATIONS[key] && key !== currentBaseKey) switchInstallation(key);
+});
+// Any element with data-site switches the page's installation (modal cards, menu, footer).
+// Deferred one tick so Bootstrap can close the modal/menu before the selectors re-render.
+document.addEventListener("click", (e) => {
+const siteBtn = e.target.closest("[data-site]");
+if (!siteBtn) return;
+e.preventDefault();
+const key = siteBtn.getAttribute("data-site");
+const fromFooter = Boolean(siteBtn.closest("footer"));
+setTimeout(() => {
+switchInstallation(key);
+if (fromFooter) window.scrollTo({ top: 0, behavior: "smooth" });
+}, 0);
+});
+const locSearchEl = document.getElementById("locSearch");
+if (locSearchEl) locSearchEl.addEventListener("input", renderLocationModal);
+const locModalEl = document.getElementById("locationModal");
+if (locModalEl) {
+locModalEl.addEventListener("show.bs.modal", () => { if (locSearchEl) locSearchEl.value = ""; renderLocationModal(); });
+locModalEl.addEventListener("shown.bs.modal", () => { if (locSearchEl) locSearchEl.focus(); });
+}
+// Initialize from the URL hash (e.g. mccs-ai-assistant.html#okinawa); default is Quantico, MCCS HQ
+const initialKey = (location.hash || "").replace("#", "").toLowerCase();
+switchInstallation(INSTALLATIONS[initialKey] ? initialKey : "quantico");
+</script>
+</body>
+</html>
