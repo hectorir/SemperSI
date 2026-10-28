@@ -1,0 +1,11 @@
+Instructions:
+
+*MUST BE CONNECTED TO A DoW NETWORK*
+
+Download and save all of these files into a single folder
+
+Press windows + r and type:
+
+"chrome.exe --user-data-dir="C:\chrome_demo" --disable-web-security"
+
+Then drag and drop the MCCS_Demo.html into the newly opened browser window
